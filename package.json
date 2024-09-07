@@ -8,9 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format": "prettier --write ."
   },
   "dependencies": {
+    "firebase": "^10.13.1",
     "flowbite": "^2.5.1",
     "flowbite-react": "^0.10.1",
     "react": "^18.3.1",
