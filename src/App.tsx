@@ -1,12 +1,10 @@
 // src/App.tsx
 import React from 'react';
 
+import SidebarComponent from './components/Sidebar/Sidebar.tsx';
+
 const App: React.FC = () => {
-  return (
-    <div>
-      <h1>Firebase Data Test</h1>
-    </div>
-  );
+  return <SidebarComponent />;
 };
 
 export default App;
