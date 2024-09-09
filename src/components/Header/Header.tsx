@@ -17,11 +17,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, userName }) => {
     <header className="flex items-center justify-between bg-white dark:bg-gray-900 shadow-md p-4">
       {/* Logo on the left */}
       <div className="flex items-center">
-        <img
-          src="/path/to/logo.png" // replace with your logo path
-          alt="Logo"
-          className="h-8 w-auto"
-        />
+        <img src="" alt="Logo" className="h-8 w-auto" />
         <h1 className="ml-3 text-2xl font-semibold dark:text-white">
           Dashboard
         </h1>
@@ -41,11 +37,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, userName }) => {
       <div className="flex items-center">
         {isLoggedIn ? (
           <>
-            <img
-              src="/path/to/avatar.png" // replace with the user's avatar path
-              alt="User Avatar"
-              className="h-8 w-8 rounded-full"
-            />
+            <img src="" alt="User Avatar" className="h-8 w-8 rounded-full" />
             <span className="ml-3 text-lg dark:text-white">{userName}</span>
           </>
         ) : (
