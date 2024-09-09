@@ -82,11 +82,6 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
-      <div className="p-5 flex-1">
-        <h1 className="text-2xl font-semibold">Home Page</h1>
-      </div>
     </div>
   );
 };
