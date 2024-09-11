@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ReactElement, FC } from 'react';
 import {
   BsArrowLeftShort,
   BsFillHouseDoorFill,
@@ -7,14 +7,22 @@ import {
   BsGearFill,
   BsReverseListColumnsReverse,
 } from 'react-icons/bs';
-const menuItems = [
-  { name: 'Dashboard', icon: <BsFillHouseDoorFill /> },
-  { name: 'Subjects', icon: <BsReverseListColumnsReverse /> },
-  { name: 'Students', icon: <BsFillPeopleFill /> },
-  { name: 'Settings', icon: <BsGearFill /> },
+type PageKey = 'dashboard' | 'subjects' | 'students' | 'settings';
+type MenuItem = {
+  name: string;
+  icon: ReactElement;
+  key: PageKey;
+};
+const menuItems: MenuItem[] = [
+  { name: 'Dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
+  { name: 'Subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
+  { name: 'Students', icon: <BsFillPeopleFill />, key: 'students' },
+  { name: 'Settings', icon: <BsGearFill />, key: 'settings' },
 ];
-
-const Sidebar = () => {
+interface SidebarProps {
+  setActivePage: (page: PageKey) => void;
+}
+const Sidebar: FC<SidebarProps> = ({ setActivePage }) => {
   const [open, setOpen] = useState(true);
   const [activeMenuItem, setActiveMenuItem] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -45,7 +53,10 @@ const Sidebar = () => {
             <li
               key={index}
               className={`group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative ${activeMenuItem === index ? 'bg-gray-300' : ''} ${!open && 'justify-center'}`}
-              onClick={() => setActiveMenuItem(index)}
+              onClick={() => {
+                setActiveMenuItem(index);
+                setActivePage(item.key);
+              }}
             >
               <span
                 className={`text-2xl ${activeMenuItem === index ? 'text-blue-500' : 'text-gray-600'}`}
@@ -81,11 +92,6 @@ const Sidebar = () => {
             )}
           </div>
         </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="p-5 flex-1">
-        <h1 className="text-2xl font-semibold">Home Page</h1>
       </div>
     </div>
   );
