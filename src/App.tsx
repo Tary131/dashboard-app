@@ -12,6 +12,12 @@ const pages: Record<PageKey, ReactElement> = {
   subjects: <Subjects />,
   settings: <Settings />,
 };
+const pageTitles: Record<PageKey, string> = {
+  dashboard: 'Dashboard',
+  subjects: 'Subjects',
+  students: 'Students',
+  settings: 'Settings',
+};
 
 const App: FC = () => {
   const [activePage, setActivePage] = useState<PageKey>('students');
@@ -21,7 +27,7 @@ const App: FC = () => {
         <Sidebar setActivePage={setActivePage} />
         <main className="flex-1 p-5">
           <h1 className="text-2xl font-semibold flex justify-center">
-            Main Content Area
+            {pageTitles[activePage]}
           </h1>
           {pages[activePage]}
         </main>
