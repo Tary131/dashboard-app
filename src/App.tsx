@@ -2,9 +2,9 @@ import { useState, ReactElement, FC } from 'react';
 import Sidebar from './components/Sidebar/Sidebar.tsx';
 import Students from './components/Students/Students.tsx';
 import Subjects from './components/Subjects/SubjectDashboard.tsx';
+import Dashboard from './components/Dashboard/Dashboard';
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'settings';
-const Dashboard: FC = () => <div>Dashboard Page</div>;
 const Settings: FC = () => <div>Settings Page</div>;
 const pages: Record<PageKey, ReactElement> = {
   students: <Students />,
