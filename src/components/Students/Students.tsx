@@ -1,4 +1,5 @@
 import Card from '../Card.tsx';
+import StudentsTable from '../Table/StudentsTable.tsx';
 
 const Students = () => {
   return (
@@ -25,7 +26,7 @@ const Students = () => {
       />
       <Card
         title="Students List"
-        content="This card 5"
+        content={<StudentsTable />}
         className="lg:col-span-6 md:col-span-4 sm:col-span-2 row-span-2"
       />
     </div>
