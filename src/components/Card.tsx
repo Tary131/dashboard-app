@@ -9,12 +9,14 @@ interface CardProps {
 const Card: FC<CardProps> = ({ title, content, className = '' }) => {
   return (
     <div
-      className={`shadow-lg rounded-lg p-4 bg-white border border-gray-200 transform transition-transform duration-300 hover:scale-105 ${className}`}
+      className={`shadow-lg rounded-lg p-4 bg-white border border-gray-200 transform transition-transform duration-300 hover:scale-105 ${className} overflow-hidden`}
     >
       <h2 className="flex justify-center text-xl font-semibold mb-2">
         {title}
       </h2>
-      <p className="flex justify-center">{content}</p>
+      <div className="flex justify-center overflow-auto">
+        <p>{content}</p>
+      </div>
     </div>
   );
 };
