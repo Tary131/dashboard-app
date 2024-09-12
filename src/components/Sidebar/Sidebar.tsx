@@ -6,8 +6,9 @@ import {
   BsFillPeopleFill,
   BsGearFill,
   BsReverseListColumnsReverse,
+  BsCalendar2DayFill,
 } from 'react-icons/bs';
-type PageKey = 'dashboard' | 'subjects' | 'students' | 'settings';
+type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
   name: string;
   icon: ReactElement;
@@ -17,6 +18,7 @@ const menuItems: MenuItem[] = [
   { name: 'Dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
   { name: 'Subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
   { name: 'Students', icon: <BsFillPeopleFill />, key: 'students' },
+  { name: 'Calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
   { name: 'Settings', icon: <BsGearFill />, key: 'settings' },
 ];
 interface SidebarProps {
@@ -49,7 +51,7 @@ const Sidebar: FC<SidebarProps> = ({ setActivePage }) => {
 
         {/* Menu Items */}
         <ul className="flex-grow space-y-2">
-          {menuItems.slice(0, 4).map((item, index) => (
+          {menuItems.slice(0, 5).map((item, index) => (
             <li
               key={index}
               className={`group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative ${activeMenuItem === index ? 'bg-gray-300' : ''} ${!open && 'justify-center'}`}
