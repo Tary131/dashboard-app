@@ -3,19 +3,22 @@ import Sidebar from './components/Sidebar/Sidebar.tsx';
 import Students from './components/Students/Students.tsx';
 import Subjects from './components/Subjects/SubjectDashboard.tsx';
 import Dashboard from './components/Dashboard/Dashboard';
+import Calendar from './components/Calendar/Calendar.tsx';
 
-type PageKey = 'dashboard' | 'subjects' | 'students' | 'settings';
+type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 const Settings: FC = () => <div>Settings Page</div>;
 const pages: Record<PageKey, ReactElement> = {
   students: <Students />,
   dashboard: <Dashboard />,
   subjects: <Subjects />,
+  calendar: <Calendar />,
   settings: <Settings />,
 };
 const pageTitles: Record<PageKey, string> = {
   dashboard: 'Dashboard',
   subjects: 'Subjects',
   students: 'Students',
+  calendar: 'Calendar',
   settings: 'Settings',
 };
 
