@@ -4,9 +4,10 @@ import Students from './components/Students/Students.tsx';
 import Subjects from './components/Subjects/SubjectDashboard.tsx';
 import Dashboard from './components/Dashboard/Dashboard';
 import Calendar from './components/Calendar/Calendar.tsx';
+import Settings from './components/Settings/Settings.tsx';
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
-const Settings: FC = () => <div>Settings Page</div>;
+
 const pages: Record<PageKey, ReactElement> = {
   students: <Students />,
   dashboard: <Dashboard />,
