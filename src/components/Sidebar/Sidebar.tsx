@@ -1,4 +1,5 @@
-import { useState, ReactElement, FC } from 'react';
+import { FC, ReactElement, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   BsArrowLeftShort,
   BsFillHouseDoorFill,
@@ -8,12 +9,14 @@ import {
   BsReverseListColumnsReverse,
   BsCalendar2DayFill,
 } from 'react-icons/bs';
+
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
   name: string;
   icon: ReactElement;
   key: PageKey;
 };
+
 const menuItems: MenuItem[] = [
   { name: 'Dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
   { name: 'Subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
@@ -21,21 +24,11 @@ const menuItems: MenuItem[] = [
   { name: 'Calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
   { name: 'Settings', icon: <BsGearFill />, key: 'settings' },
 ];
-interface SidebarProps {
-  setActivePage: (page: PageKey) => void;
-}
-const Sidebar: FC<SidebarProps> = ({ setActivePage }) => {
-  const [open, setOpen] = useState(true);
-  const [activeMenuItem, setActiveMenuItem] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  // const [language, setLanguage] = useState("en");
 
-  const handleAuthAction = () => {
-    if (isLoggedIn) {
-      setIsLoggedIn(false);
-    } else {
-    }
-  };
+const Sidebar: FC = () => {
+  const [open, setOpen] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
 
   return (
     <div className="flex h-screen">
@@ -51,23 +44,24 @@ const Sidebar: FC<SidebarProps> = ({ setActivePage }) => {
 
         {/* Menu Items */}
         <ul className="flex-grow space-y-2">
-          {menuItems.slice(0, 5).map((item, index) => (
+          {menuItems.map((item) => (
             <li
-              key={index}
-              className={`group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative ${activeMenuItem === index ? 'bg-gray-300' : ''} ${!open && 'justify-center'}`}
-              onClick={() => {
-                setActiveMenuItem(index);
-                setActivePage(item.key);
-              }}
+              key={item.key}
+              className={`group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative ${location.pathname === `/${item.key}` ? 'bg-gray-300' : ''} ${!open && 'justify-center'}`}
             >
-              <span
-                className={`text-2xl ${activeMenuItem === index ? 'text-blue-500' : 'text-gray-600'}`}
+              <Link
+                to={`/${item.key}`}
+                className="flex items-center gap-4 w-full h-full"
               >
-                {item.icon}
-              </span>
-              {open && (
-                <span className="text-base font-medium">{item.name}</span>
-              )}
+                <span
+                  className={`text-2xl ${location.pathname === `/${item.key}` ? 'text-blue-500' : 'text-gray-600'}`}
+                >
+                  {item.icon}
+                </span>
+                {open && (
+                  <span className="text-base font-medium">{item.name}</span>
+                )}
+              </Link>
             </li>
           ))}
         </ul>
@@ -83,10 +77,14 @@ const Sidebar: FC<SidebarProps> = ({ setActivePage }) => {
           {/* Auth Action */}
           <div
             className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative"
-            onClick={handleAuthAction}
+            onClick={() => {
+              if (isLoggedIn) {
+                setIsLoggedIn(false);
+              } else {
+              }
+            }}
           >
-            <span className="text-2xl">{isLoggedIn ? '🔓' : '🔑'}</span>{' '}
-            {/* Use appropriate icons */}
+            <span className="text-2xl">{isLoggedIn ? '🔓' : '🔑'}</span>
             {open && (
               <span className="text-base font-medium">
                 {isLoggedIn ? 'Log Out' : 'Log In / Registration'}

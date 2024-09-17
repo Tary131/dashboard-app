@@ -1,41 +1,30 @@
-import { useState, ReactElement, FC } from 'react';
+import { FC } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar.tsx';
 import Students from './components/Students/Students.tsx';
 import Subjects from './components/Subjects/SubjectDashboard.tsx';
 import Dashboard from './components/Dashboard/Dashboard';
 import Calendar from './components/Calendar/Calendar.tsx';
-
-type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
-const Settings: FC = () => <div>Settings Page</div>;
-const pages: Record<PageKey, ReactElement> = {
-  students: <Students />,
-  dashboard: <Dashboard />,
-  subjects: <Subjects />,
-  calendar: <Calendar />,
-  settings: <Settings />,
-};
-const pageTitles: Record<PageKey, string> = {
-  dashboard: 'Dashboard',
-  subjects: 'Subjects',
-  students: 'Students',
-  calendar: 'Calendar',
-  settings: 'Settings',
-};
+import Settings from './components/Settings/Settings.tsx';
 
 const App: FC = () => {
-  const [activePage, setActivePage] = useState<PageKey>('students');
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex flex-grow">
-        <Sidebar setActivePage={setActivePage} />
-        <main className="flex-1 p-5">
-          <h1 className="text-2xl font-semibold flex justify-center">
-            {pageTitles[activePage]}
-          </h1>
-          {pages[activePage]}
-        </main>
+    <Router>
+      <div className="flex flex-col h-screen">
+        <div className="flex flex-grow">
+          <Sidebar />
+          <main className="flex-1 p-5">
+            <Routes>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/students" element={<Students />} />
+              <Route path="/subjects" element={<Subjects />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </main>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 };
 
