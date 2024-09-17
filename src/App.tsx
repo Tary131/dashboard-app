@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
-import Sidebar from './components/Sidebar/Sidebar';
-import Header from './components/Header/Header';
+import { useState, ReactElement, FC } from 'react';
+import Sidebar from './components/Sidebar/Sidebar.tsx';
+import Students from './components/Students/Students.tsx';
+import Subjects from './components/Subjects/SubjectDashboard.tsx';
+import Dashboard from './components/Dashboard/Dashboard';
+import Calendar from './components/Calendar/Calendar.tsx';
 
-const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const userName = 'Taras';
+type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
+const Settings: FC = () => <div>Settings Page</div>;
+const pages: Record<PageKey, ReactElement> = {
+  students: <Students />,
+  dashboard: <Dashboard />,
+  subjects: <Subjects />,
+  calendar: <Calendar />,
+  settings: <Settings />,
+};
+const pageTitles: Record<PageKey, string> = {
+  dashboard: 'Dashboard',
+  subjects: 'Subjects',
+  students: 'Students',
+  calendar: 'Calendar',
+  settings: 'Settings',
+};
 
+const App: FC = () => {
+  const [activePage, setActivePage] = useState<PageKey>('students');
   return (
     <div className="flex flex-col h-screen">
-      {/* Header */}
-      <Header
-        isLoggedIn={isLoggedIn}
-        userName={isLoggedIn ? userName : 'Guest'}
-      />
-
-      {/* Main content with Sidebar */}
       <div className="flex flex-grow">
-        <Sidebar />
+        <Sidebar setActivePage={setActivePage} />
         <main className="flex-1 p-5">
-          <h1 className="text-2xl font-semibold">Main Content Area</h1>
-          {/* Additional content here */}
+          <h1 className="text-2xl font-semibold flex justify-center">
+            {pageTitles[activePage]}
+          </h1>
+          {pages[activePage]}
         </main>
       </div>
     </div>
