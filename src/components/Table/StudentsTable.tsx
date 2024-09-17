@@ -4,8 +4,16 @@ import FilterInputs from './FilterInputs';
 import { sortData } from '../../utils/sorting.ts';
 import { filterData } from '../../utils/filtering';
 
+interface Student {
+  name: string;
+  grade: number;
+  subject: string;
+  class: string;
+  date: string;
+}
+
 // Sample data
-const sampleData = [
+const sampleData: Student[] = [
   {
     name: 'John Doe',
     grade: 90,
@@ -44,7 +52,7 @@ const sampleData = [
 ];
 
 const StudentsTable: FC = () => {
-  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<keyof Student | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [filters, setFilters] = useState({
     name: '',
@@ -67,7 +75,7 @@ const StudentsTable: FC = () => {
   );
 
   // Handle sorting when a column header is clicked
-  const handleSort = (key: string) => {
+  const handleSort = (key: keyof Student) => {
     setSortKey(key);
   };
 
@@ -79,7 +87,7 @@ const StudentsTable: FC = () => {
   // Handle filter input change
   const handleFilterChange = (
     e: ChangeEvent<HTMLInputElement>,
-    key: string
+    key: keyof Student
   ) => {
     setFilters({ ...filters, [key]: e.target.value });
   };

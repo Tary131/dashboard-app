@@ -1,8 +1,19 @@
 import { FC, ChangeEvent } from 'react';
 
+interface Filters {
+  name: string;
+  grade: string;
+  subject: string;
+  class: string;
+  date: string;
+}
+
 interface FilterInputsProps {
-  filters: any;
-  handleFilterChange: (e: ChangeEvent<HTMLInputElement>, key: string) => void;
+  filters: Filters;
+  handleFilterChange: (
+    e: ChangeEvent<HTMLInputElement>,
+    key: keyof Filters
+  ) => void;
 }
 
 const FilterInputs: FC<FilterInputsProps> = ({

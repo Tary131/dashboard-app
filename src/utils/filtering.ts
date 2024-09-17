@@ -1,4 +1,18 @@
-export const filterData = (data: any[], filters: any) => {
+interface Student {
+  name: string;
+  grade: number;
+  subject: string;
+  class: string;
+  date: string;
+}
+interface Filters {
+  name: string;
+  grade: string;
+  subject: string;
+  class: string;
+  date: string;
+}
+export const filterData = (data: Student[], filters: Filters): Student[] => {
   return data.filter((row) => {
     return (
       row.name.toLowerCase().includes(filters.name.toLowerCase()) &&
