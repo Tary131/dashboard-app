@@ -1,8 +1,15 @@
+interface Student {
+  name: string;
+  grade: number;
+  subject: string;
+  class: string;
+  date: string;
+}
 export const sortData = (
-  data: any[],
-  sortKey: string | null,
+  data: Student[],
+  sortKey: keyof Student | null,
   sortOrder: 'asc' | 'desc'
-) => {
+): Student[] => {
   return [...data].sort((a, b) => {
     if (!sortKey) return 0;
     const aValue = a[sortKey as keyof typeof a];
