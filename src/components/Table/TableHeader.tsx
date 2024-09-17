@@ -1,10 +1,18 @@
 // components/TableHeader.tsx
 import { FC } from 'react';
 
+interface Student {
+  name: string;
+  grade: number;
+  subject: string;
+  class: string;
+  date: string;
+}
+
 interface TableHeaderProps {
-  sortKey: string | null;
+  sortKey: keyof Student | null;
   sortOrder: 'asc' | 'desc';
-  handleSort: (key: string) => void;
+  handleSort: (key: keyof Student) => void;
   toggleSortOrder: () => void;
 }
 
@@ -15,7 +23,9 @@ const TableHeader: FC<TableHeaderProps> = ({
   toggleSortOrder,
 }) => (
   <tr>
-    {['name', 'grade', 'subject', 'class', 'date'].map((key) => (
+    {(
+      ['name', 'grade', 'subject', 'class', 'date'] as Array<keyof Student>
+    ).map((key) => (
       <th key={key} className="p-2 text-left">
         <div
           className="flex items-center gap-2 cursor-pointer group"
