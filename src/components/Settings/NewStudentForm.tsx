@@ -1,72 +1,73 @@
-import { useState, FC } from 'react';
+import { FC } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+
+interface FormValues {
+  name: string;
+  surname: string;
+  classes: string;
+  subjects: string;
+  avatar: FileList | null;
+}
 
 const NewStudentForm: FC = () => {
-  const [studentData, setStudentData] = useState({
-    name: '',
-    surname: '',
-    classes: '',
-    subjects: '',
-    avatar: '',
+  const { register, handleSubmit, setValue } = useForm<FormValues>({
+    defaultValues: {
+      name: '',
+      surname: '',
+      classes: '',
+      subjects: '',
+      avatar: null,
+    },
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setStudentData({ ...studentData, [name]: value });
+  // Handle input change
+  const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    setValue('avatar', files);
   };
 
-  const handleSave = () => {
+  // Handle form submission
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    const file = data.avatar?.[0];
+    if (file) {
+      console.log(file);
+    }
     alert('New student added');
   };
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <input
         type="text"
-        name="name"
-        value={studentData.name}
-        onChange={handleInputChange}
+        {...register('name')}
         placeholder="Name"
         className="w-full p-2 border border-gray-300 rounded"
       />
       <input
         type="text"
-        name="surname"
-        value={studentData.surname}
-        onChange={handleInputChange}
+        {...register('surname')}
         placeholder="Surname"
         className="w-full p-2 border border-gray-300 rounded"
       />
       <input
         type="text"
-        name="classes"
-        value={studentData.classes}
-        onChange={handleInputChange}
+        {...register('classes')}
         placeholder="Classes"
         className="w-full p-2 border border-gray-300 rounded"
       />
       <textarea
-        name="subjects"
-        value={studentData.subjects}
-        onChange={handleInputChange}
+        {...register('subjects')}
         placeholder="Subjects"
         className="w-full p-2 border border-gray-300 rounded"
       />
       <input
         type="file"
-        name="avatar"
-        onChange={(e) =>
-          setStudentData({
-            ...studentData,
-            avatar: e.target.files?.[0]?.name || '',
-          })
-        }
+        {...register('avatar')}
+        onChange={onChangeFile}
         className="w-full p-2 border border-gray-300 rounded"
       />
       <button
-        type="button"
-        onClick={handleSave}
+        type="submit"
         className="w-full p-2 bg-green-500 text-white rounded"
       >
         Add Student
