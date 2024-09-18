@@ -14,9 +14,7 @@ const Card: FC<CardProps> = ({ title, content, className = '' }) => {
       <h2 className="flex justify-center text-xl font-semibold mb-2">
         {title}
       </h2>
-      <div className="flex justify-center overflow-auto">
-        <p>{content}</p>
-      </div>
+      <div className="flex justify-center overflow-auto">{content}</div>
     </div>
   );
 };
