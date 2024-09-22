@@ -1,18 +1,18 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import useFormattedStudentData from '../Table/FormattedStudentData.tsx'; // Ensure correct path to the hook
+import { getClassStudentCounts } from './getClassStudentCounts.tsx';
 
-// Sample data for the pie chart
-const data = [
-  { className: 'A1', students: 200 },
-  { className: 'B2', students: 150 },
-  { className: 'C1', students: 180 },
-  { className: 'D3', students: 120 },
-  { className: 'E4', students: 250 },
-];
-
-const COLORS = ['#ff4d4d', '#ff6f61', '#ff8c42', '#ffb74d', '#ffee58'];
+const COLORS = ['#8e44ad', '#16a085', '#f1c40f', '#a93226', '#2471a3'];
 
 const GradePieChart: React.FC = () => {
+  const { formattedData, loading, error } = useFormattedStudentData();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const data = getClassStudentCounts(formattedData);
+
   return (
     <PieChart width={600} height={300}>
       <Pie
