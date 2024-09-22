@@ -2,8 +2,10 @@ import Card from '../Card.tsx';
 import StudentsTable from '../Table/StudentsTable.tsx';
 import GradePieChart from '../Charts/GradePieChart.tsx';
 import StudentStatistics from '../Charts/StudentStatistics.tsx';
+import useStudentAverages from './useStudentAverages.ts';
 
 const Students = () => {
+  const { bestStudent, worstStudent } = useStudentAverages();
   return (
     <div className="grid gap-4 p-5 h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
       <Card
@@ -17,13 +19,21 @@ const Students = () => {
         className="lg:col-span-4 md:col-span-4 sm:col-span-2"
       />
       <Card
-        title="Best students"
-        content="John Doe"
+        title="Best Student"
+        content={
+          bestStudent
+            ? `${bestStudent.name} (Avg: ${bestStudent.average.toFixed(2)})`
+            : 'N/A'
+        }
         className="lg:col-span-2 md:col-span-2 sm:col-span-2"
       />
       <Card
-        title="Worst students"
-        content="Sam Johnson"
+        title="Worst Student"
+        content={
+          worstStudent
+            ? `${worstStudent.name} (Avg: ${worstStudent.average.toFixed(2)})`
+            : 'N/A'
+        }
         className="lg:col-span-2 md:col-span-2 sm:col-span-2"
       />
       <Card
