@@ -6,31 +6,38 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  Legend,
 } from 'recharts';
 
-// Sample data
-const data = [
-  { month: 'Jan', avgGrade: 75 },
-  { month: 'Feb', avgGrade: 80 },
-  { month: 'Mar', avgGrade: 85 },
-  { month: 'Apr', avgGrade: 90 },
-  { month: 'May', avgGrade: 95 },
-  { month: 'Jun', avgGrade: 88 },
-  { month: 'Jul', avgGrade: 82 },
-  { month: 'Aug', avgGrade: 80 },
-  { month: 'Sep', avgGrade: 85 },
-  { month: 'Oct', avgGrade: 90 },
-  { month: 'Nov', avgGrade: 92 },
-  { month: 'Dec', avgGrade: 94 },
-];
+interface WeeklyChartData {
+  week: string;
+  avgGrade: number;
+}
 
-const AverageGradesChart: FC = () => (
-  <LineChart width={600} height={300} data={data}>
+interface AverageGradesChartProps {
+  weeklyData: WeeklyChartData[];
+}
+
+const AverageGradesChart: FC<AverageGradesChartProps> = ({ weeklyData }) => (
+  <LineChart
+    width={800}
+    height={400}
+    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+  >
     <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="month" />
+    <XAxis dataKey="week" />
     <YAxis />
     <Tooltip />
-    <Line type="monotone" dataKey="avgGrade" stroke="#8884d8" />
+    <Legend />
+
+    {/* Weekly average grades */}
+    <Line
+      type="monotone"
+      dataKey="avgGrade"
+      data={weeklyData}
+      name="Weekly Avg"
+      stroke="#82ca9d"
+    />
   </LineChart>
 );
 
