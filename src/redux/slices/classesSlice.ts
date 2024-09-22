@@ -4,6 +4,7 @@ import { addClass, fetchClasses } from '../thunks/classesThunks';
 
 const initialState: ClassesState = {
   classes: {},
+  totalCount: 0,
   loading: false,
   error: null,
 };
@@ -19,7 +20,8 @@ const classesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchClasses.fulfilled, (state, action) => {
-        state.classes = action.payload;
+        state.classes = action.payload.classes;
+        state.totalCount = action.payload.totalCount;
         state.loading = false;
       })
       .addCase(fetchClasses.rejected, (state, action) => {
