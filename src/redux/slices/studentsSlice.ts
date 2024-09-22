@@ -2,13 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import { StudentsState } from '../../types/types';
 import {
   fetchStudents,
+  fetchStudentById,
   addStudent,
-  updateStudent,
+  updateStudentWithGrades,
   deleteStudent,
 } from '../thunks/studentsThunks.ts';
 
 const initialState: StudentsState = {
   students: {},
+  totalCount: 0,
   loading: false,
   error: null,
 };
@@ -25,10 +27,24 @@ const studentsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchStudents.fulfilled, (state, action) => {
-        state.students = action.payload;
+        state.students = action.payload.students;
+        state.totalCount = action.payload.totalCount;
         state.loading = false;
       })
       .addCase(fetchStudents.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch Student by ID
+      .addCase(fetchStudentById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchStudentById.fulfilled, (state, action) => {
+        state.students[action.payload.id] = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchStudentById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -40,10 +56,10 @@ const studentsSlice = createSlice({
         state.error = action.payload as string;
       })
       // Update student
-      .addCase(updateStudent.fulfilled, (state, action) => {
+      .addCase(updateStudentWithGrades.fulfilled, (state, action) => {
         state.students[action.payload.id] = action.payload;
       })
-      .addCase(updateStudent.rejected, (state, action) => {
+      .addCase(updateStudentWithGrades.rejected, (state, action) => {
         state.error = action.payload as string;
       })
       // Delete student
