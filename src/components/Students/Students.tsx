@@ -1,7 +1,7 @@
 import Card from '../Card.tsx';
 import StudentsTable from '../Table/StudentsTable.tsx';
-import StatisticsChart from '../Charts/StatisticsChart.tsx';
 import GradePieChart from '../Charts/GradePieChart.tsx';
+import StudentStatistics from '../Charts/StudentStatistics.tsx';
 
 const Students = () => {
   return (
@@ -13,7 +13,7 @@ const Students = () => {
       />
       <Card
         title="Statistics"
-        content={<StatisticsChart />}
+        content={<StudentStatistics />}
         className="lg:col-span-4 md:col-span-4 sm:col-span-2"
       />
       <Card
@@ -29,6 +29,11 @@ const Students = () => {
       <Card
         title="Students List"
         content={<StudentsTable />}
+        className="lg:col-span-6 md:col-span-4 sm:col-span-2 row-span-2"
+      />
+      <Card
+        title="Students List"
+        content={''}
         className="lg:col-span-6 md:col-span-4 sm:col-span-2 row-span-2"
       />
     </div>
