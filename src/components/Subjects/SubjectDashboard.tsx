@@ -1,27 +1,55 @@
 import { FC } from 'react';
-import { subjectsData } from './subjectsData';
+import useFormattedStudentData from '../Table/FormattedStudentData.tsx';
 import SubjectCard from './SubjectCard';
 
 const SubjectDashboard: FC = () => {
-  const handleAddStudent = (subject: string) => {
-    alert(`Add a new student to ${subject}`);
-  };
+  const { formattedData, loading, error } = useFormattedStudentData();
 
-  const handleUpdateStudents = (subject: string) => {
-    alert(`Update the student list for ${subject}`);
-  };
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  // Process data to calculate number of students per subject and average grade
+  const subjectsSummary = formattedData.reduce(
+    (acc, student) => {
+      if (!student.subject) return acc;
+
+      const subject = acc[student.subject] || {
+        totalStudents: 0,
+        totalGrade: 0,
+        avgGrade: 0,
+      };
+
+      acc[student.subject] = {
+        totalStudents: subject.totalStudents + 1,
+        totalGrade: subject.totalGrade + (student.grade || 0),
+        avgGrade: 0, // We'll calculate this after the loop
+      };
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      { totalStudents: number; totalGrade: number; avgGrade: number }
+    >
+  );
+
+  // Calculate the average grade for each subject
+  Object.keys(subjectsSummary).forEach((subject) => {
+    const summary = subjectsSummary[subject];
+    summary.avgGrade =
+      summary.totalStudents > 0
+        ? summary.totalGrade / summary.totalStudents
+        : 0;
+  });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {subjectsData.map((subjectData, index) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {Object.keys(subjectsSummary).map((subjectName) => (
         <SubjectCard
-          key={index}
-          subject={subjectData.subject}
-          students={subjectData.students}
-          avgGrade={subjectData.avgGrade}
-          classes={subjectData.classes}
-          onAddStudent={handleAddStudent}
-          onUpdateStudents={handleUpdateStudents}
+          key={subjectName}
+          subject={subjectName}
+          students={subjectsSummary[subjectName].totalStudents}
+          avgGrade={subjectsSummary[subjectName].avgGrade}
         />
       ))}
     </div>
