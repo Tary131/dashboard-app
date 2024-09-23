@@ -1,34 +1,47 @@
-import { useState, FC } from 'react';
+import { useState, FC, useEffect } from 'react';
 import { FaTrash, FaCheck } from 'react-icons/fa';
-
-interface Todo {
-  id: number;
-  text: string;
-  done: boolean;
-}
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'; // Your custom hook
+import {
+  fetchTodos,
+  addTodo,
+  toggleTodo,
+  deleteTodo,
+} from '../../redux/slices/todoSlice';
 
 const TodoList: FC = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const dispatch = useAppDispatch();
+  const { user, isLoggedIn } = useAppSelector((state) => state.auth);
+  const { todos, loading, error } = useAppSelector((state) => state.todos);
   const [newTodo, setNewTodo] = useState<string>('');
 
+  useEffect(() => {
+    if (isLoggedIn && user?.id) {
+      dispatch(fetchTodos(user.id));
+    }
+  }, [isLoggedIn, user, dispatch]);
+
   const handleAddTodo = () => {
-    if (newTodo.trim() !== '') {
-      setTodos([...todos, { id: Date.now(), text: newTodo, done: false }]);
+    if (newTodo.trim() !== '' && user?.id) {
+      dispatch(addTodo({ userId: user.id, text: newTodo }));
       setNewTodo('');
     }
   };
 
-  const handleToggleDone = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, done: !todo.done } : todo
-      )
-    );
+  const handleToggleDone = (id: string, done: boolean) => {
+    if (user?.id) {
+      dispatch(toggleTodo({ userId: user.id, id, done }));
+    }
   };
 
-  const handleDeleteTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const handleDeleteTodo = (id: string) => {
+    if (user?.id) {
+      dispatch(deleteTodo({ userId: user.id, id }));
+    }
   };
+
+  if (!isLoggedIn) return <p>Please log in to see your to-do list.</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="w-full p-4 bg-gray-100 rounded-lg">
@@ -57,7 +70,7 @@ const TodoList: FC = () => {
             <span className="flex-grow">{todo.text}</span>
             <div className="flex space-x-2">
               <button
-                onClick={() => handleToggleDone(todo.id)}
+                onClick={() => handleToggleDone(todo.id, todo.done)}
                 className="text-green-500"
               >
                 <FaCheck />

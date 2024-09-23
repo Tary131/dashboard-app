@@ -7,6 +7,7 @@ import {
 } from 'firebase/auth';
 
 interface User {
+  id: string;
   email: string;
   name: string;
 }
@@ -34,7 +35,11 @@ export const loginUser = createAsyncThunk(
         data.password
       );
       const user = userCredential.user;
-      return { email: user.email || '', name: user.displayName || '' }; // Ensure email is a string
+      return {
+        id: user.uid,
+        email: user.email || '',
+        name: user.displayName || '',
+      };
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -58,7 +63,7 @@ export const registerUser = createAsyncThunk(
 
       await updateProfile(user, { displayName: data.name });
 
-      return { email: user.email || '', name: data.name }; // Ensure email is a string
+      return { id: user.uid, email: user.email || '', name: data.name };
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
