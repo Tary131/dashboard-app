@@ -44,6 +44,7 @@ export const fetchClasses = createAsyncThunk(
       return { classes, totalCount };
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch classes');
+
     }
   }
 );

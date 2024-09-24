@@ -20,6 +20,7 @@ const classesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchClasses.fulfilled, (state, action) => {
+
         state.classes = action.payload.classes;
         state.totalCount = action.payload.totalCount;
         state.loading = false;
