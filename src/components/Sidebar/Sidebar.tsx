@@ -11,7 +11,7 @@ import {
 } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logoutUser } from '../../redux/slices/auth/authSlice';
-import AuthModal from '../Auth/AuthModal.tsx'; // Import your AuthModal here
+import AuthModal from '../Auth/AuthModal.tsx';
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
@@ -30,16 +30,16 @@ const menuItems: MenuItem[] = [
 
 const Sidebar: FC = () => {
   const [open, setOpen] = useState(true);
-  const [showModal, setShowModal] = useState(false); // State for opening the Auth Modal
+  const [showModal, setShowModal] = useState(false);
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { isLoggedIn, user } = useAppSelector((state) => state.auth);
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
-      dispatch(logoutUser()); // Dispatch logout action
+      dispatch(logoutUser());
     } else {
-      setShowModal(true); // Open modal for login/register
+      setShowModal(true);
     }
   };
 
