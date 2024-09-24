@@ -41,11 +41,6 @@ const Students = () => {
         content={<StudentsTable />}
         className="lg:col-span-6 md:col-span-4 sm:col-span-2 row-span-2"
       />
-      <Card
-        title="Students List"
-        content={''}
-        className="lg:col-span-6 md:col-span-4 sm:col-span-2 row-span-2"
-      />
     </div>
   );
 };

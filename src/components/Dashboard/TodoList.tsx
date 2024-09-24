@@ -44,19 +44,21 @@ const TodoList: FC = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="w-full p-4 bg-gray-100 rounded-lg">
-      <h2 className="text-xl font-semibold mb-4">To-Do List</h2>
+    <div className="w-full p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <h2 className="text-xl font-semibold mb-4 dark:text-gray-200">
+        To-Do List
+      </h2>
       <div className="flex mb-4">
         <input
           type="text"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
-          className="border rounded-lg p-2 flex-grow"
+          className="border rounded-lg p-2 flex-grow dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
           placeholder="Add new to-do..."
         />
         <button
           onClick={handleAddTodo}
-          className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg"
+          className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
         >
           Add
         </button>
@@ -65,19 +67,19 @@ const TodoList: FC = () => {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className={`flex items-center justify-between mb-2 ${todo.done ? 'line-through text-gray-400' : ''}`}
+            className={`flex items-center justify-between mb-2 ${todo.done ? 'line-through text-gray-400 dark:text-gray-500' : 'dark:text-gray-200'}`}
           >
             <span className="flex-grow">{todo.text}</span>
             <div className="flex space-x-2">
               <button
                 onClick={() => handleToggleDone(todo.id, todo.done)}
-                className="text-green-500"
+                className="text-green-500 dark:text-green-400"
               >
                 <FaCheck />
               </button>
               <button
                 onClick={() => handleDeleteTodo(todo.id)}
-                className="text-red-500"
+                className="text-red-500 dark:text-red-400"
               >
                 <FaTrash />
               </button>

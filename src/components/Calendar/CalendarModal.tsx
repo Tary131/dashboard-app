@@ -34,16 +34,18 @@ const CalendarModal: FC<CalendarModalProps> = ({
 
   return (
     <CardModal onClose={onClose}>
-      <h2 className="text-xl mb-4">Add Event</h2>
+      <h2 className="text-xl mb-4 text-gray-900 dark:text-gray-100">
+        Add Event
+      </h2>
       <input
-        className="w-full p-2 border border-gray-300 rounded mb-4"
+        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Event Title"
       />
       <select
-        className="w-full p-2 border border-gray-300 rounded mb-4"
+        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
       >
@@ -51,29 +53,33 @@ const CalendarModal: FC<CalendarModalProps> = ({
         <option value="Test">Test</option>
         <option value="Meeting">Meeting</option>
       </select>
-      <label className="block mb-2">Start Time:</label>
+      <label className="block mb-2 text-gray-900 dark:text-gray-100">
+        Start Time:
+      </label>
       <input
-        className="w-full p-2 border border-gray-300 rounded mb-4"
+        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         type="datetime-local"
         value={startTime}
         onChange={(e) => setStartTime(e.target.value)}
       />
-      <label className="block mb-2">End Time:</label>
+      <label className="block mb-2 text-gray-900 dark:text-gray-100">
+        End Time:
+      </label>
       <input
-        className="w-full p-2 border border-gray-300 rounded mb-4"
+        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         type="datetime-local"
         value={endTime}
         onChange={(e) => setEndTime(e.target.value)}
       />
       <div className="flex justify-end">
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={handleSave}
         >
           Save
         </button>
         <button
-          className="ml-4 bg-gray-300 text-gray-700 px-4 py-2 rounded"
+          className="ml-4 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-100 px-4 py-2 rounded"
           onClick={onClose}
         >
           Cancel

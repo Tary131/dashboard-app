@@ -27,7 +27,7 @@ const FilterInputs: FC<FilterInputsProps> = ({
         placeholder="Filter by name"
         value={filters.name}
         onChange={(e) => handleFilterChange(e, 'name')}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       />
     </th>
     <th className="p-2">
@@ -36,7 +36,7 @@ const FilterInputs: FC<FilterInputsProps> = ({
         placeholder="Filter by grade"
         value={filters.grade}
         onChange={(e) => handleFilterChange(e, 'grade')}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       />
     </th>
     <th className="p-2">
@@ -45,7 +45,7 @@ const FilterInputs: FC<FilterInputsProps> = ({
         placeholder="Filter by subject"
         value={filters.subject}
         onChange={(e) => handleFilterChange(e, 'subject')}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       />
     </th>
     <th className="p-2">
@@ -54,7 +54,7 @@ const FilterInputs: FC<FilterInputsProps> = ({
         placeholder="Filter by class"
         value={filters.class}
         onChange={(e) => handleFilterChange(e, 'class')}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       />
     </th>
     <th className="p-2">
@@ -63,7 +63,7 @@ const FilterInputs: FC<FilterInputsProps> = ({
         placeholder="Filter by date"
         value={filters.date}
         onChange={(e) => handleFilterChange(e, 'date')}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       />
     </th>
   </tr>
