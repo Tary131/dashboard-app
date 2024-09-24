@@ -1,0 +1,30 @@
+{
+  "dashboard": "Dashboard",
+  "subjects": "Subjects",
+  "students": "Students",
+  "calendar": "Calendar",
+  "settings": "Settings",
+  "language": "Language",
+  "logout": "Log out",
+  "login": "Log in",
+  "auth": {
+    "register": "Register",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
+    "passwordMismatch": "Passwords do not match",
+    "required": {
+      "email": "Email is required",
+      "password": "Password is required",
+      "confirmPassword": "Confirm your password",
+      "name": "Name is required"
+    },
+    "authError": "Authentication error",
+    "toggle": {
+      "toLogin": "Already have an account? Login",
+      "toRegister": "Need an account? Register"
+    }
+  }
+}
