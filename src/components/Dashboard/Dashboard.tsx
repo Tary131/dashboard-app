@@ -2,6 +2,8 @@ import { FC } from 'react';
 import Card from '../Card.tsx';
 import AverageGradesChart from '../Charts/AverageGradesChart.tsx';
 import TodoList from './TodoList.tsx';
+import StudentCountDisplay from '../Charts/StudentCountDisplay.tsx';
+import ClassCountDisplay from '../Charts/ClassCountDisplay.tsx';
 
 const Dashboard: FC = () => (
   <div className="grid gap-4 p-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -12,7 +14,7 @@ const Dashboard: FC = () => (
     />
     <Card
       title="Total student count"
-      content={<p>1000</p>}
+      content={<StudentCountDisplay />}
       className="col-span-1 row-span-1"
     />
     <Card
@@ -33,7 +35,7 @@ const Dashboard: FC = () => (
     />
     <Card
       title="Total class count"
-      content={<p>21</p>}
+      content={<ClassCountDisplay />}
       className="col-span-1 row-span-1"
     />
     <Card

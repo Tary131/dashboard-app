@@ -1,11 +1,9 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBulKFMJYT8MbGTxKCEM8Pdc7G8lZMSrvc',
   authDomain: 'dashboard-project-68306.firebaseapp.com',
-  databaseURL:
-    'https://dashboard-project-68306-default-rtdb.europe-west1.firebasedatabase.app',
   projectId: 'dashboard-project-68306',
   storageBucket: 'dashboard-project-68306.appspot.com',
   messagingSenderId: '376307678290',
@@ -13,4 +11,4 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getDatabase(app);
+export const db = getFirestore(app);

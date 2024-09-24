@@ -1,7 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../firebase/firebaseConfig';
 import { Student } from '../../types/types';
-import { ref, set, get, child, remove } from 'firebase/database';
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  // arrayUnion,
+} from 'firebase/firestore';
 import { getCurrentTimestamp } from '../helpers/timestamp';
 
 // Fetching students
@@ -9,15 +18,34 @@ export const fetchStudents = createAsyncThunk(
   'students/fetchStudents',
   async (_, { rejectWithValue }) => {
     try {
-      const dbRef = ref(db);
-      const snapshot = await get(child(dbRef, 'students'));
-      if (snapshot.exists()) {
-        return snapshot.val();
-      } else {
-        return {};
-      }
+      const studentsRef = collection(db, 'students');
+      const snapshot = await getDocs(studentsRef);
+      const students: { [id: string]: Student } = {};
+      snapshot.forEach((doc) => {
+        students[doc.id] = { id: doc.id, ...doc.data() } as Student;
+      });
+      const totalCount = snapshot.size;
+      return { students, totalCount };
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch students');
+    }
+  }
+);
+// Fetching a student by ID
+export const fetchStudentById = createAsyncThunk(
+  'students/fetchStudentById',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const studentRef = doc(db, 'students', id);
+      const studentDoc = await getDoc(studentRef);
+
+      if (!studentDoc.exists()) {
+        throw new Error('Student not found');
+      }
+
+      return { id: studentDoc.id, ...studentDoc.data() } as Student;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch student');
     }
   }
 );
@@ -26,22 +54,24 @@ export const fetchStudents = createAsyncThunk(
 export const addStudent = createAsyncThunk(
   'students/addStudent',
   async (
-    studentData: Omit<Student, 'createdAt' | 'updatedAt'>,
+    studentData: Omit<Student, 'createdAt' | 'updatedAt' | 'id'>, // Omit `createdAt`, `updatedAt`, and `id`
     { rejectWithValue }
   ) => {
-    const { id, ...data } = studentData;
+    const { ...data } = studentData;
     const timestamp = getCurrentTimestamp();
 
-    const studentWithTimestamps: Student = {
+    const studentWithTimestamps: Omit<Student, 'id'> = {
       ...data,
-      id,
       createdAt: timestamp,
       updatedAt: timestamp,
     };
 
     try {
-      await set(ref(db, `students/${id}`), studentWithTimestamps);
-      return studentWithTimestamps;
+      // Generate a new document with an auto-ID in the "students" collection
+      const studentRef = doc(collection(db, 'students'));
+      await setDoc(studentRef, { ...studentWithTimestamps, id: studentRef.id });
+
+      return { ...studentWithTimestamps, id: studentRef.id };
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to add student');
     }
@@ -49,32 +79,50 @@ export const addStudent = createAsyncThunk(
 );
 
 // Updating a student
-export const updateStudent = createAsyncThunk(
-  'students/updateStudent',
+
+export const updateStudentWithGrades = createAsyncThunk(
+  'students/updateStudentWithGrades',
   async (
-    studentData: Omit<Student, 'createdAt'>,
+    {
+      studentId,
+      newGrades,
+    }: {
+      studentId: string;
+      newGrades: { subjectId: string; grade: string; description: string }[];
+    },
     { getState, rejectWithValue }
   ) => {
-    const { id, ...data } = studentData;
     const timestamp = getCurrentTimestamp();
 
     try {
       const state = getState() as {
         students: { students: { [key: string]: Student } };
       };
-      const existingStudent = state.students.students[id];
+      const existingStudent = state.students.students[studentId];
 
       if (!existingStudent) throw new Error('Student not found');
 
-      const updatedStudent: Student = {
-        ...data,
-        id,
-        createdAt: existingStudent.createdAt,
+      const studentRef = doc(db, 'students', studentId);
+
+      const existingGrades = existingStudent.subjectGrades || [];
+
+      const gradesWithTimestamps = newGrades.map((grade) => ({
+        ...grade,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      }));
+
+      const updatedGrades = [...existingGrades, ...gradesWithTimestamps];
+
+      const updatedData = {
+        ...existingStudent,
+        subjectGrades: updatedGrades,
         updatedAt: timestamp,
       };
 
-      await set(ref(db, `students/${id}`), updatedStudent);
-      return updatedStudent;
+      await updateDoc(studentRef, updatedData);
+
+      return updatedData;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to update student');
     }
@@ -86,7 +134,8 @@ export const deleteStudent = createAsyncThunk(
   'students/deleteStudent',
   async (studentId: string, { rejectWithValue }) => {
     try {
-      await remove(ref(db, `students/${studentId}`));
+      const studentRef = doc(db, 'students', studentId);
+      await deleteDoc(studentRef);
       return studentId;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to delete student');

@@ -1,40 +1,50 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../firebase/firebaseConfig';
-import { ref, set, get, child } from 'firebase/database';
 import { Subject } from '../../types/types';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { getCurrentTimestamp } from '../helpers/timestamp';
 
-export const addSubject = createAsyncThunk(
-  'subjects/addSubject',
-  async (subjectData: Omit<Subject, 'createdAt'>, { rejectWithValue }) => {
-    const timestamp = getCurrentTimestamp();
-    const subjectWithTimestamp: Subject = {
-      ...subjectData,
-      createdAt: timestamp,
-    };
-
+// Fetching subjects
+export const fetchSubjects = createAsyncThunk(
+  'subjects/fetchSubjects', // Corrected action type
+  async (_, { rejectWithValue }) => {
     try {
-      await set(ref(db, `subjects/${subjectData.id}`), subjectWithTimestamp);
-      return subjectWithTimestamp;
+      const subjectsRef = collection(db, 'subjects');
+      const snapshot = await getDocs(subjectsRef);
+      const subjects: { [id: string]: Subject } = {};
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        subjects[doc.id] = { id: doc.id, ...data } as Subject;
+      });
+      return subjects;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to add subject');
+      return rejectWithValue(error.message || 'Failed to fetch subjects');
     }
   }
 );
 
-export const fetchSubjects = createAsyncThunk(
-  'subjects/fetchSubjects',
-  async (_, { rejectWithValue }) => {
+// Adding a subject
+export const addSubject = createAsyncThunk(
+  'subjects/addSubject',
+  async (
+    subjectData: Omit<Subject, 'id' | 'createdAt' | 'updatedAt'>,
+    { rejectWithValue }
+  ) => {
+    const timestamp = getCurrentTimestamp();
+
     try {
-      const dbRef = ref(db);
-      const snapshot = await get(child(dbRef, 'subjects'));
-      if (snapshot.exists()) {
-        return snapshot.val(); // Returning subjects data
-      } else {
-        return {};
-      }
+      const subjectRef = doc(collection(db, 'subjects'));
+      const subjectWithTimestamps: Subject = {
+        ...subjectData,
+        id: subjectRef.id,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      };
+
+      await setDoc(subjectRef, subjectWithTimestamps);
+      return subjectWithTimestamps;
     } catch (error: any) {
-      return rejectWithValue('Failed to fetch subjects');
+      return rejectWithValue(error.message || 'Failed to add subject');
     }
   }
 );
