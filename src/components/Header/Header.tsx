@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 
 interface HeaderProps {
   isLoggedIn: boolean;
-  userName: string;
+  userName: string | undefined;
 }
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, userName }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   return (
     <header className="flex items-center justify-between bg-white dark:bg-gray-900 shadow-md p-4">
       {/* Logo on the left */}
       <div className="flex items-center">
-        <img src="" alt="Logo" className="h-8 w-auto" />
         <h1 className="ml-3 text-2xl font-semibold dark:text-white">
           Dashboard
         </h1>
@@ -32,15 +29,17 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, userName }) => {
         </button>
       </div>
 
-      {/* User avatar and name */}
+      {/* User avatar and name OR Log In/Register buttons */}
       <div className="flex items-center">
         {isLoggedIn ? (
           <>
-            <img src="" alt="User Avatar" className="h-8 w-8 rounded-full" />
+            {/* If logged in, display user's name */}
             <span className="ml-3 text-lg dark:text-white">{userName}</span>
           </>
         ) : (
-          <span className="text-lg dark:text-white">Guest</span>
+          <>
+            <span className="ml-3 text-lg dark:text-white">Guest</span>
+          </>
         )}
       </div>
     </header>

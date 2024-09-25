@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar.tsx';
 import Students from './components/Students/Students.tsx';
@@ -7,16 +7,16 @@ import Dashboard from './components/Dashboard/Dashboard';
 import Calendar from './components/Calendar/Calendar.tsx';
 import Settings from './components/Settings/Settings.tsx';
 import Header from './components/Header/Header.tsx';
+import { useAppSelector } from './redux/hooks.ts';
 
 const App: FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Simulating logged
-  const [userName, setUserName] = useState('John Doe'); // Simulated username
+  const { user, isLoggedIn } = useAppSelector((state) => state.auth);
 
   return (
     <Router>
       <div className="flex flex-col h-screen">
         {/* Header at the top */}
-        <Header isLoggedIn={isLoggedIn} userName={userName} />
+        <Header isLoggedIn={isLoggedIn} userName={user?.name} />
 
         <div className="flex flex-grow">
           <Sidebar />

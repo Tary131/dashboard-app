@@ -1,15 +1,27 @@
 import { FC } from 'react';
 import Card from '../Card.tsx';
-import AverageGradesChart from '../Charts/AverageGradesChart.tsx';
 import TodoList from './TodoList.tsx';
 import StudentCountDisplay from '../Charts/StudentCountDisplay.tsx';
 import ClassCountDisplay from '../Charts/ClassCountDisplay.tsx';
+import AverageGradesByTime from '../Charts/AverageGradesByTime.tsx';
+
+const getFormattedDate = () => {
+  const today = new Date();
+
+  // Get day, month, and year
+  const day = String(today.getDate()).padStart(2, '0'); // Ensure two digits
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const year = today.getFullYear();
+
+  // Format the date as DD.MM.YYYY
+  return `${day}.${month}.${year}`;
+};
 
 const Dashboard: FC = () => (
   <div className="grid gap-4 p-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <Card
-      title="Average Grades by Month"
-      content={<AverageGradesChart />}
+      title="Average Grades by Week"
+      content={<AverageGradesByTime />}
       className="col-span-3 row-span-2"
     />
     <Card
@@ -30,7 +42,7 @@ const Dashboard: FC = () => (
     />
     <Card
       title="Today day"
-      content={<p>1.1.2025</p>}
+      content={getFormattedDate()}
       className="col-span-1 row-span-1"
     />
     <Card

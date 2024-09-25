@@ -1,4 +1,4 @@
-import { FC, ReactElement, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   BsArrowLeftShort,
@@ -9,11 +9,14 @@ import {
   BsReverseListColumnsReverse,
   BsCalendar2DayFill,
 } from 'react-icons/bs';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { logoutUser } from '../../redux/slices/auth/authSlice';
+import AuthModal from '../Auth/AuthModal.tsx'; // Import your AuthModal here
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
   name: string;
-  icon: ReactElement;
+  icon: React.ReactElement;
   key: PageKey;
 };
 
@@ -27,12 +30,21 @@ const menuItems: MenuItem[] = [
 
 const Sidebar: FC = () => {
   const [open, setOpen] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State for opening the Auth Modal
   const location = useLocation();
+  const dispatch = useAppDispatch();
+  const { isLoggedIn, user } = useAppSelector((state) => state.auth);
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) {
+      dispatch(logoutUser()); // Dispatch logout action
+    } else {
+      setShowModal(true); // Open modal for login/register
+    }
+  };
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <div
         className={`bg-gradient-to-r from-gray-100 to-white border-r shadow-lg h-full p-5 pt-8 ${open ? 'w-72' : 'w-20'} duration-300 relative flex flex-col`}
       >
@@ -76,23 +88,23 @@ const Sidebar: FC = () => {
 
           {/* Auth Action */}
           <div
+            onClick={handleAuthClick}
             className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative"
-            onClick={() => {
-              if (isLoggedIn) {
-                setIsLoggedIn(false);
-              } else {
-              }
-            }}
           >
             <span className="text-2xl">{isLoggedIn ? '🔓' : '🔑'}</span>
             {open && (
               <span className="text-base font-medium">
-                {isLoggedIn ? 'Log Out' : 'Log In / Registration'}
+                {isLoggedIn
+                  ? `Log Out (${user?.name})`
+                  : 'Log In / Registration'}
               </span>
             )}
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 };
