@@ -10,6 +10,7 @@ import Header from './components/Header/Header.tsx';
 import { useAppSelector, useAppDispatch } from './redux/hooks.ts';
 import { loginUser } from './redux/slices/auth/authSlice';
 import { auth } from './firebase/firebaseConfig';
+import './i18n';
 
 const App: FC = () => {
   const { user, isLoggedIn } = useAppSelector((state) => state.auth);

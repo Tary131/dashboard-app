@@ -1,0 +1,30 @@
+{
+  "dashboard": "Nástěnka",
+  "subjects": "Předměty",
+  "students": "Studenti",
+  "calendar": "Kalendář",
+  "settings": "Nastavení",
+  "language": "Jazyk",
+  "logout": "Odhlasit se",
+  "login": "Přihlasit se",
+  "auth": {
+    "register": "Registrovat se",
+    "login": "Přihlásit se",
+    "email": "E-mail",
+    "password": "Heslo",
+    "confirmPassword": "Potvrďte heslo",
+    "name": "Jméno",
+    "passwordMismatch": "Hesla se neshodují",
+    "required": {
+      "email": "E-mail je povinný",
+      "password": "Heslo je povinné",
+      "confirmPassword": "Potvrďte své heslo",
+      "name": "Jméno je povinné"
+    },
+    "authError": "Chyba při ověřování",
+    "toggle": {
+      "toLogin": "Máte účet? Přihlaste se",
+      "toRegister": "Potřebujete účet? Registrovat"
+    }
+  }
+}

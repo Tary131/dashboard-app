@@ -12,6 +12,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logoutUser } from '../../redux/slices/auth/authSlice';
 import AuthModal from '../Auth/AuthModal.tsx';
+import { useTranslation } from 'react-i18next';
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
@@ -21,14 +22,15 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { name: 'Dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
-  { name: 'Subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
-  { name: 'Students', icon: <BsFillPeopleFill />, key: 'students' },
-  { name: 'Calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
-  { name: 'Settings', icon: <BsGearFill />, key: 'settings' },
+  { name: 'dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
+  { name: 'subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
+  { name: 'students', icon: <BsFillPeopleFill />, key: 'students' },
+  { name: 'calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
+  { name: 'settings', icon: <BsGearFill />, key: 'settings' },
 ];
 
 const Sidebar: FC = () => {
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
@@ -41,6 +43,12 @@ const Sidebar: FC = () => {
     } else {
       setShowModal(true);
     }
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    console.log(`Changing language to: ${lang}`);
+    i18n.changeLanguage(lang);
+    localStorage.setItem('user-lang', lang);
   };
 
   return (
@@ -71,7 +79,7 @@ const Sidebar: FC = () => {
                   {item.icon}
                 </span>
                 {open && (
-                  <span className="text-base font-medium">{item.name}</span>
+                  <span className="text-base font-medium">{t(item.name)}</span>
                 )}
               </Link>
             </li>
@@ -83,7 +91,16 @@ const Sidebar: FC = () => {
           {/* Language Switcher */}
           <div className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative">
             <BsGlobe className="text-2xl text-gray-600" />
-            {open && <span className="text-base font-medium">Language</span>}
+            {open && (
+              <span className="text-base font-medium">{t('language')}</span>
+            )}
+            <select
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              defaultValue={i18n.language}
+            >
+              <option value="en">English</option>
+              <option value="cz">Czech</option>
+            </select>
           </div>
 
           {/* Auth Action */}
@@ -94,9 +111,7 @@ const Sidebar: FC = () => {
             <span className="text-2xl">{isLoggedIn ? '🔓' : '🔑'}</span>
             {open && (
               <span className="text-base font-medium">
-                {isLoggedIn
-                  ? `Log Out (${user?.name})`
-                  : 'Log In / Registration'}
+                {isLoggedIn ? `${t('logout')} (${user?.name})` : t('login')}
               </span>
             )}
           </div>
