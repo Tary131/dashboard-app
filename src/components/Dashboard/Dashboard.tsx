@@ -8,12 +8,10 @@ import AverageGradesByTime from '../Charts/AverageGradesByTime.tsx';
 const getFormattedDate = () => {
   const today = new Date();
 
-  // Get day, month, and year
   const day = String(today.getDate()).padStart(2, '0'); // Ensure two digits
   const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
   const year = today.getFullYear();
 
-  // Format the date as DD.MM.YYYY
   return `${day}.${month}.${year}`;
 };
 
@@ -49,16 +47,6 @@ const Dashboard: FC = () => (
       title="Total class count"
       content={<ClassCountDisplay />}
       className="col-span-1 row-span-1"
-    />
-    <Card
-      title="Teacher class list"
-      content={<p>A1,B2</p>}
-      className="col-span-2 row-span-2"
-    />
-    <Card
-      title="Teacher class list"
-      content={<p>Math,Art</p>}
-      className="col-span-2 row-span-2"
     />
   </div>
 );

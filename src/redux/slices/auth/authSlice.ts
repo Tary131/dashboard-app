@@ -4,9 +4,11 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
+  signOut,
 } from 'firebase/auth';
 
 interface User {
+  id: string;
   email: string;
   name: string;
 }
@@ -34,14 +36,18 @@ export const loginUser = createAsyncThunk(
         data.password
       );
       const user = userCredential.user;
-      return { email: user.email || '', name: user.displayName || '' }; // Ensure email is a string
+      return {
+        id: user.uid,
+        email: user.email || '',
+        name: user.displayName || '',
+      };
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// Updated register
+// Registration
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (
@@ -58,23 +64,45 @@ export const registerUser = createAsyncThunk(
 
       await updateProfile(user, { displayName: data.name });
 
-      return { email: user.email || '', name: data.name }; // Ensure email is a string
+      return { id: user.uid, email: user.email || '', name: data.name };
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
   }
 );
 
+// Update user data
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async ({ name }: { name: string }, { rejectWithValue }) => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        await updateProfile(user, { displayName: name });
+        return { id: user.uid, name };
+      } else {
+        throw new Error('No user is currently authenticated');
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+export const logoutUser = createAsyncThunk(
+  'auth/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      await signOut(auth);
+      return {};
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {
-    logoutUser: (state) => {
-      state.isLoggedIn = false;
-      state.user = null;
-      state.error = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -92,9 +120,26 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.error = action.payload as string;
+      })
+
+      .addCase(updateUser.fulfilled, (state, action) => {
+        if (state.user && state.user.id === action.payload.id) {
+          state.user.name = action.payload.name;
+        }
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.error = null;
+      })
+
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { logoutUser } = authSlice.actions;
 export default authSlice.reducer;

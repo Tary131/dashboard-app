@@ -1,27 +1,30 @@
-import { useState, useEffect, FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core';
-import CalendarModal from './CalendarModal.tsx';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  fetchCalendarEvents,
+  addCalendarEvent,
+  deleteCalendarEvent,
+} from '../../redux/slices/calendarSlice';
+import CalendarModal from './CalendarModal';
 
 const Calendar: FC = () => {
-  const [events, setEvents] = useState<EventInput[]>([]);
+  const dispatch = useAppDispatch();
+  const { user, isLoggedIn } = useAppSelector((state) => state.auth);
+  const { events, loading, error } = useAppSelector((state) => state.calendar);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<EventInput | null>(null);
   const [defaultStartTime, setDefaultStartTime] = useState('');
 
   useEffect(() => {
-    const storedEvents = localStorage.getItem('events');
-    if (storedEvents) {
-      setEvents(JSON.parse(storedEvents));
+    if (isLoggedIn && user?.id) {
+      dispatch(fetchCalendarEvents(user.id));
     }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(events));
-  }, [events]);
+  }, [isLoggedIn, user, dispatch]);
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     const start = selectInfo.startStr;
@@ -40,7 +43,9 @@ const Calendar: FC = () => {
         `Do you want to delete the event '${clickInfo.event.title}'?`
       )
     ) {
-      setEvents(events.filter((event) => event.id !== clickInfo.event.id));
+      dispatch(
+        deleteCalendarEvent({ userId: user!.id, id: clickInfo.event.id! })
+      );
     }
   };
 
@@ -50,30 +55,21 @@ const Calendar: FC = () => {
     start: string;
     end?: string;
   }) => {
-    if (selectedEvent) {
+    if (!selectedEvent) {
+      console.error('Selected event is null. Cannot save event.');
+      return;
+    }
+    {
       const newEvent = {
         ...selectedEvent,
         title: eventDetails.title,
         start: eventDetails.start,
         end: eventDetails.end || undefined,
-        color: getCategoryColor(eventDetails.category),
+        category: eventDetails.category,
       };
-      setEvents([...events, newEvent]);
+      dispatch(addCalendarEvent({ userId: user!.id, event: newEvent }));
       setModalVisible(false);
       setSelectedEvent(null);
-    }
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Lesson':
-        return '#FF5733'; // Red
-      case 'Test':
-        return '#33FF57'; // Green
-      case 'Meeting':
-        return '#3357FF'; // Blue
-      default:
-        return '#999999'; // Default Grey
     }
   };
 
@@ -104,6 +100,8 @@ const Calendar: FC = () => {
           defaultStart={defaultStartTime}
         />
       )}
+      {loading && <p>Loading events...</p>}
+      {error && <p>Error loading events: {error}</p>}
     </>
   );
 };
