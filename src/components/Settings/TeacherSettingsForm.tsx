@@ -2,6 +2,8 @@ import { FC, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { updateUser } from '../../redux/slices/auth/authSlice';
+import Input from './Input';
+import Button from './Button';
 
 interface FormValues {
   name: string;
@@ -11,7 +13,12 @@ const TeacherSettingsForm: FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
       name: user?.name || '',
     },
@@ -33,19 +40,23 @@ const TeacherSettingsForm: FC = () => {
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="text"
-        {...register('name')}
-        placeholder="Name"
-        className="w-full p-2 border border-gray-300 rounded"
+    <form
+      className="max-w-md mx-auto space-y-6"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Input
+        label="Name"
+        id="name"
+        error={errors.name?.message} // Show error message if there's a validation error
+        {...register('name', { required: 'Name is required' })}
+        placeholder="Enter your name"
+        className="block w-full p-2 mt-1"
       />
-      <button
+      <Button
+        label="Save"
         type="submit"
-        className="w-full p-2 bg-blue-500 text-white rounded"
-      >
-        Save
-      </button>
+        className="w-full bg-blue-500 text-white"
+      />
     </form>
   );
 };
