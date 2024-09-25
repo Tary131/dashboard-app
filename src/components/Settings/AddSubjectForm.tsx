@@ -2,13 +2,20 @@ import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../redux/hooks';
 import { addSubject } from '../../redux/thunks/subjectsThunks';
+import Button from './Button';
+import Input from './Input';
 
 interface FormValues {
   name: string;
 }
 
 const AddSubjectForm: FC = () => {
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
       name: '',
     },
@@ -37,22 +44,22 @@ const AddSubjectForm: FC = () => {
 
   return (
     <form
-      className="max-w-sm mx-auto space-y-4"
+      className="max-w-sm mx-auto space-y-6"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <input
-        type="text"
-        {...register('name')}
-        placeholder="Subject Name"
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+      <Input
+        label="Subject Name"
+        id="name"
+        error={errors.name?.message}
+        {...register('name', { required: 'Subject name is required' })}
+        placeholder="Enter subject name"
+        className="block w-full py-2 px-4 mt-1"
       />
-
-      <button
+      <Button
+        label="Add Subject"
         type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-blue-500 rounded"
-      >
-        Add Subject
-      </button>
+        className="w-full bg-blue-500"
+      />
     </form>
   );
 };

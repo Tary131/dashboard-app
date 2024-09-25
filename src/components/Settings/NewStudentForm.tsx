@@ -6,6 +6,8 @@ import { fetchSubjects } from '../../redux/thunks/subjectsThunks';
 import { Class, Subject } from '../../types/types';
 import { addStudent } from '../../redux/thunks/studentsThunks';
 import { fetchClasses } from '../../redux/thunks/classesThunks';
+import Button from './Button';
+import Input from './Input';
 
 type SelectOption = {
   value: string;
@@ -14,18 +16,22 @@ type SelectOption = {
 
 interface FormValues {
   fullName: string;
-  classes: string; // Still keep as string for form submission
+  classes: string;
   subjects: string[];
-  avatar: FileList | null;
 }
 
 const NewStudentForm: FC = () => {
-  const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
       fullName: '',
       classes: '',
       subjects: [],
-      avatar: null,
     },
   });
 
@@ -58,17 +64,11 @@ const NewStudentForm: FC = () => {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const studentData = {
       name: data.fullName,
-      classIds: selectedClass ? selectedClass.value : '', // Get the selected class ID
+      classIds: selectedClass ? selectedClass.value : '',
       subjectIds: selectedSubjects.map((option) => option.value),
     };
 
-    const file = data.avatar?.[0]; // Handle avatar file
-
     try {
-      if (file) {
-        // Handle avatar upload here if needed
-      }
-
       const resultAction = await dispatch(addStudent(studentData));
 
       if (addStudent.rejected.match(resultAction)) {
@@ -76,7 +76,7 @@ const NewStudentForm: FC = () => {
       } else {
         console.log('Student added successfully:', resultAction.payload);
         reset();
-        setSelectedClass(null); // Reset selected class
+        setSelectedClass(null);
         setSelectedSubjects([]);
       }
     } catch (error) {
@@ -86,14 +86,16 @@ const NewStudentForm: FC = () => {
 
   return (
     <form
-      className="max-w-sm mx-auto space-y-4"
+      className="max-w-sm mx-auto space-y-6"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <input
-        type="text"
-        {...register('fullName')}
-        placeholder="Full Name"
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+      <Input
+        label="Full Name"
+        id="fullName"
+        error={errors.fullName?.message}
+        {...register('fullName', { required: 'Full name is required' })}
+        placeholder="Enter full name"
+        className="block w-full py-2 px-4 mt-1"
       />
 
       {/* Classes single-select */}
@@ -101,8 +103,8 @@ const NewStudentForm: FC = () => {
         options={classOptions}
         value={selectedClass}
         onChange={(selectedOption) => {
-          setSelectedClass(selectedOption as SelectOption); // Set single class
-          setValue('classes', (selectedOption as SelectOption).value); // Set value for form
+          setSelectedClass(selectedOption as SelectOption);
+          setValue('classes', (selectedOption as SelectOption).value);
         }}
         placeholder="Select a class..."
         className="basic-single"
@@ -126,22 +128,11 @@ const NewStudentForm: FC = () => {
         classNamePrefix="select"
       />
 
-      <input
-        type="file"
-        {...register('avatar')}
-        onChange={(e) => {
-          const files = e.target.files;
-          setValue('avatar', files);
-        }}
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-      />
-
-      <button
+      <Button
+        label="Add Student"
         type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-green-500 rounded"
-      >
-        Add Student
-      </button>
+        className="w-full bg-green-500"
+      />
     </form>
   );
 };

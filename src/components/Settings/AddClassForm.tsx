@@ -1,7 +1,9 @@
 import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../redux/hooks';
-import { addClass } from '../../redux/thunks/classesThunks.ts';
+import { addClass } from '../../redux/thunks/classesThunks';
+import Button from './Button.tsx';
+import Input from './Input';
 
 interface FormValues {
   name: string;
@@ -30,38 +32,23 @@ const AddClassForm: FC = () => {
         reset();
       }
     } catch (error) {
-      console.error('Error adding Class:', error);
+      console.error('Error adding class:', error);
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-sm mx-auto space-y-4"
+      className="max-w-sm mx-auto space-y-6"
     >
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Name
-        </label>
-        <input
-          id="name"
-          {...register('name', { required: 'Name is required' })}
-          className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-green-500 rounded"
-      >
-        Add Class
-      </button>
+      <Input
+        label="Class Name"
+        id="name"
+        error={errors.name?.message}
+        {...register('name', { required: 'Class name is required' })}
+        className="block w-full py-2 px-4 mt-1"
+      />
+      <Button label={'Add class'} type="submit" />
     </form>
   );
 };

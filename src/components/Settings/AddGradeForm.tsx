@@ -7,6 +7,8 @@ import { fetchStudents } from '../../redux/thunks/studentsThunks';
 import { Subject, Student, Grades } from '../../types/types';
 import { updateStudentWithGrades } from '../../redux/thunks/studentsThunks';
 import { fetchGrades } from '../../redux/thunks/gradesThunks.ts';
+import Button from './Button'; // Custom Button component
+import Input from './Input'; // Custom Input component
 
 type SelectOption = {
   value: string;
@@ -21,7 +23,13 @@ interface FormValues {
 }
 
 const AddGradeForm: FC = () => {
-  const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
       studentId: '',
       subject: '',
@@ -62,6 +70,7 @@ const AddGradeForm: FC = () => {
       value: subject.id,
       label: subject.name,
     }));
+
   const gradeOptions: SelectOption[] =
     grades &&
     Object.values(grades).map((grade: Grades) => ({
@@ -101,63 +110,72 @@ const AddGradeForm: FC = () => {
   };
 
   return (
-    <form
-      className="max-w-sm mx-auto space-y-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       {/* Student select */}
-      <Select
-        options={studentOptions}
-        value={selectedStudent}
-        onChange={(selectedOption) => {
-          setSelectedStudent(selectedOption as SelectOption);
-          setValue('studentId', (selectedOption as SelectOption).value); // Set selected student ID
-        }}
-        placeholder="Select student..."
-        className="basic-select"
-        classNamePrefix="select"
-      />
+      <div>
+        <Select
+          options={studentOptions}
+          value={selectedStudent}
+          onChange={(selectedOption) => {
+            setSelectedStudent(selectedOption as SelectOption);
+            setValue('studentId', (selectedOption as SelectOption).value);
+          }}
+          placeholder="Select student..."
+          className="basic-select"
+          classNamePrefix="select"
+        />
+        {errors.studentId && (
+          <p className="text-red-600 text-sm mt-1">Student is required.</p>
+        )}
+      </div>
 
       {/* Subject select */}
-      <Select
-        options={subjectOptions}
-        value={selectedSubject}
-        onChange={(selectedOption) => {
-          setSelectedSubject(selectedOption as SelectOption);
-          setValue('subject', (selectedOption as SelectOption).value);
-        }}
-        placeholder="Select subject..."
-        className="basic-select"
-        classNamePrefix="select"
-      />
+      <div>
+        <Select
+          options={subjectOptions}
+          value={selectedSubject}
+          onChange={(selectedOption) => {
+            setSelectedSubject(selectedOption as SelectOption);
+            setValue('subject', (selectedOption as SelectOption).value);
+          }}
+          placeholder="Select subject..."
+          className="basic-select"
+          classNamePrefix="select"
+        />
+        {errors.subject && (
+          <p className="text-red-600 text-sm mt-1">Subject is required.</p>
+        )}
+      </div>
 
-      {/* Grade input */}
-      <Select
-        options={gradeOptions}
-        value={selectedGrade}
-        onChange={(selectedOption) => {
-          setSelectedGrade(selectedOption as SelectOption);
-          setValue('gradeId', (selectedOption as SelectOption).value); // Set selected grade ID
-        }}
-        placeholder="Select grade..."
-        className="basic-select"
-        classNamePrefix="select"
-      />
+      {/* Grade select */}
+      <div>
+        <Select
+          options={gradeOptions}
+          value={selectedGrade}
+          onChange={(selectedOption) => {
+            setSelectedGrade(selectedOption as SelectOption);
+            setValue('gradeId', (selectedOption as SelectOption).value);
+          }}
+          placeholder="Select grade..."
+          className="basic-select"
+          classNamePrefix="select"
+        />
+        {errors.gradeId && (
+          <p className="text-red-600 text-sm mt-1">Grade is required.</p>
+        )}
+      </div>
 
       {/* Description input */}
-      <input
-        type="text"
-        {...register('description')}
-        placeholder="Description (optional)"
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-      />
+      <div>
+        <Input
+          label="Description (optional)"
+          id="description"
+          {...register('description')}
+          className="block w-full py-2 px-4 mt-1"
+        />
+      </div>
 
-      <button
-        type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-green-500 rounded"
-      >
-        Add Grade
-      </button>
+      <Button label="Add Grade" type="submit" className="w-full" />
     </form>
   );
 };
