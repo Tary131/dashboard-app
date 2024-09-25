@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   BsArrowLeftShort,
   BsFillHouseDoorFill,
-  BsGlobe,
   BsFillPeopleFill,
   BsGearFill,
   BsReverseListColumnsReverse,
@@ -13,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logoutUser } from '../../redux/slices/auth/authSlice';
 import AuthModal from '../Auth/AuthModal.tsx';
 import { useTranslation } from 'react-i18next';
+import { US, CZ } from 'country-flag-icons/react/3x2'; // Import flags directly
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
@@ -28,6 +28,7 @@ const menuItems: MenuItem[] = [
   { name: 'calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
   { name: 'settings', icon: <BsGearFill />, key: 'settings' },
 ];
+
 const Sidebar: FC = () => {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(true);
@@ -49,15 +50,23 @@ const Sidebar: FC = () => {
     localStorage.setItem('user-lang', lang);
   };
 
+  const currentLanguage = i18n.language === 'en' ? 'English' : 'Czech';
+  const currentFlag =
+    i18n.language === 'en' ? (
+      <US style={{ width: '24px', height: 'auto' }} />
+    ) : (
+      <CZ style={{ width: '24px', height: 'auto' }} />
+    ); // Use the flags
+
   return (
     <div className="flex h-screen">
       <div
         className={`bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 border-r shadow-lg h-full p-5 pt-8 ${
           open ? 'w-72' : 'w-20'
-        } duration-300 relative flex flex-col`}
+        } duration-300 flex flex-col relative`}
       >
         <BsArrowLeftShort
-          className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white text-3xl rounded-full absolute -right-3 top-9 border border-black cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600 transition-transform duration-300 ${
+          className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white text-3xl rounded-full absolute -right-3 top-8 border border-black cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600 transition-transform duration-300 ${
             !open && 'rotate-180'
           }`}
           onClick={() => setOpen(!open)}
@@ -78,7 +87,11 @@ const Sidebar: FC = () => {
                 className="flex items-center gap-4 w-full h-full"
               >
                 <span
-                  className={`text-2xl ${location.pathname === `/${item.key}` ? 'text-blue-500 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400'}`}
+                  className={`text-2xl ${
+                    location.pathname === `/${item.key}`
+                      ? 'text-blue-500 dark:text-blue-300'
+                      : 'text-gray-600 dark:text-gray-400'
+                  }`}
                 >
                   {item.icon}
                 </span>
@@ -90,20 +103,20 @@ const Sidebar: FC = () => {
           ))}
         </ul>
 
-        <div className="flex flex-col mt-auto space-y-2">
-          <div className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200">
-            <BsGlobe className="text-2xl" />
-            {open && (
-              <span className="text-base font-medium">{t('language')}</span>
-            )}
-            <select
-              onChange={(e) => handleLanguageChange(e.target.value)}
-              defaultValue={i18n.language}
-              className="ml-2 bg-white dark:bg-gray-700 text-black dark:text-white"
-            >
-              <option value="en">English</option>
-              <option value="cz">Czech</option>
-            </select>
+        {/* Footer Section */}
+        <div className="mt-auto space-y-2">
+          <div
+            onClick={() =>
+              handleLanguageChange(i18n.language === 'en' ? 'cz' : 'en')
+            }
+            className="group flex items-center justify-center gap-4 p-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200"
+          >
+            <div className="flex items-center justify-center gap-2 ">
+              {currentFlag}
+              {open && (
+                <span className="text-base font-medium">{currentLanguage}</span>
+              )}
+            </div>
           </div>
 
           <div

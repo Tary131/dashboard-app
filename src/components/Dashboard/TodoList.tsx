@@ -45,9 +45,6 @@ const TodoList: FC = () => {
 
   return (
     <div className="w-full p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-      <h2 className="text-xl font-semibold mb-4 dark:text-gray-200">
-        To-Do List
-      </h2>
       <div className="flex mb-4">
         <input
           type="text"

@@ -53,7 +53,7 @@ const App: FC = () => {
           />
           <div className="flex flex-grow">
             <Sidebar />
-            <main className="flex-1 p-5">
+            <main className="flex-1 p-5 min-h-screen bg-white dark:bg-gray-900 transition duration-300">
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/students" element={<Students />} />

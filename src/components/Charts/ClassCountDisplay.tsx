@@ -15,7 +15,11 @@ const ClassCountDisplay: FC = () => {
   if (loading) return <p>Loading Classes...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  return <p>{totalCount}</p>;
+  return (
+    <p className="text-center text-9xl font-bold mt-9 text-emerald-700">
+      {totalCount}
+    </p>
+  );
 };
 
 export default ClassCountDisplay;
