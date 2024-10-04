@@ -3,7 +3,7 @@ import TableHeader from './TableHeader';
 import FilterInputs from './FilterInputs';
 import { sortData } from '../../utils/sorting';
 import { filterData } from '../../utils/filtering';
-import useFormattedStudentData from './FormattedStudentData.tsx';
+import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
 
 interface Student {
   name: string;

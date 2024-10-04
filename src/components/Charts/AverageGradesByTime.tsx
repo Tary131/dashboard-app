@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import useFormattedStudentData from '../Table/FormattedStudentData.tsx';
+import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
 import AverageGradesChart from './AverageGradesChart';
 
 const AverageGradesByTime = () => {

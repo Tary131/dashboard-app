@@ -1,4 +1,4 @@
-import { Student } from '../Table/FormattedStudentData.tsx';
+import { Student } from '../../hooks/FormattedStudentData.ts';
 export const getClassStudentCounts = (students: Student[]) => {
   const classStudentCount: { [key: string]: { [name: string]: number } } = {};
 

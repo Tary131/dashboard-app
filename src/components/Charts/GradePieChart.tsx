@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import useFormattedStudentData from '../Table/FormattedStudentData.tsx'; // Ensure correct path to the hook
+import useFormattedStudentData from '../../hooks/FormattedStudentData.ts'; // Ensure correct path to the hook
 import { getClassStudentCounts } from './getClassStudentCounts.tsx';
 
 const COLORS = ['#8e44ad', '#16a085', '#f1c40f', '#a93226', '#2471a3'];

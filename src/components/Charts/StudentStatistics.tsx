@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import useFormattedStudentData from '../Table/FormattedStudentData.tsx';
+import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
 import StatisticsChart from './StatisticsChart.tsx';
-import { Student } from '../Table/FormattedStudentData.tsx';
+import { Student } from '../../hooks/FormattedStudentData.ts';
 export interface GradeCounts {
   [key: number]: number;
   1: number;

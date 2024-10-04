@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchSubjects } from '../../redux/thunks/subjectsThunks';
-import { fetchGrades } from '../../redux/thunks/gradesThunks';
-import { fetchStudents } from '../../redux/thunks/studentsThunks';
-import { fetchClasses } from '../../redux/thunks/classesThunks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks.ts';
+import { fetchSubjects } from '../redux/thunks/subjectsThunks.ts';
+import { fetchGrades } from '../redux/thunks/gradesThunks.ts';
+import { fetchStudents } from '../redux/thunks/studentsThunks.ts';
+import { fetchClasses } from '../redux/thunks/classesThunks.ts';
 
 export interface Student {
   name: string;

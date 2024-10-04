@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import useFormattedStudentData from '../Table/FormattedStudentData.tsx';
+import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
 import SubjectCard from './SubjectCard';
 
 const SubjectDashboard: FC = () => {
