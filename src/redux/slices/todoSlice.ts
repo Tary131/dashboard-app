@@ -8,6 +8,7 @@ import {
   doc,
   deleteDoc,
 } from 'firebase/firestore';
+import { RootState } from '../store.ts';
 
 interface Todo {
   id: string;
@@ -110,5 +111,9 @@ const todoSlice = createSlice({
       });
   },
 });
+// Selectors
+export const selectTodos = (state: RootState) => state.todos.todos;
+export const selectTodosLoading = (state: RootState) => state.todos.loading;
+export const selectTodosError = (state: RootState) => state.todos.error;
 
 export default todoSlice.reducer;

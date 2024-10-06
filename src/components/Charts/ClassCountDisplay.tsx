@@ -1,13 +1,17 @@
 import { FC, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchClasses } from '../../redux/thunks/classesThunks.ts';
+import {
+  selectClassesError,
+  selectClassesLoading,
+  selectTotalCount,
+} from '../../redux/slices/classesSlice.ts';
 
 const ClassCountDisplay: FC = () => {
   const dispatch = useAppDispatch();
-  const { totalCount, loading, error } = useAppSelector(
-    (state) => state.classes
-  );
-
+  const error = useAppSelector(selectClassesError);
+  const loading = useAppSelector(selectClassesLoading);
+  const totalCount = useAppSelector(selectTotalCount);
   useEffect(() => {
     dispatch(fetchClasses());
   }, [dispatch]);

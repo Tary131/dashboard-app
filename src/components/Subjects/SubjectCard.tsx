@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import Card from '../Card.tsx'; // Adjust the import path as needed
+import Card from '../Card';
 
 interface SubjectCardProps {
   subject: string;

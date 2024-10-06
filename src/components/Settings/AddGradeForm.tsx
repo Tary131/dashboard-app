@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import Select from 'react-select';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -7,8 +7,11 @@ import { fetchStudents } from '../../redux/thunks/studentsThunks';
 import { Subject, Student, Grades } from '../../types/types';
 import { updateStudentWithGrades } from '../../redux/thunks/studentsThunks';
 import { fetchGrades } from '../../redux/thunks/gradesThunks.ts';
-import Button from './Button'; // Custom Button component
-import Input from './Input'; // Custom Input component
+import Button from './Button';
+import Input from './Input';
+import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
+import { selectStudents } from '../../redux/slices/studentsSlice.ts';
+import { selectGrades } from '../../redux/slices/gradesSlice.ts';
 
 type SelectOption = {
   value: string;
@@ -27,6 +30,7 @@ const AddGradeForm: FC = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm<FormValues>({
@@ -38,18 +42,10 @@ const AddGradeForm: FC = () => {
     },
   });
 
-  const [selectedStudent, setSelectedStudent] = useState<SelectOption | null>(
-    null
-  );
-  const [selectedSubject, setSelectedSubject] = useState<SelectOption | null>(
-    null
-  );
-  const [selectedGrade, setSelectedGrade] = useState<SelectOption | null>(null);
-
   const dispatch = useAppDispatch();
-  const { subjects } = useAppSelector((state) => state.subjects);
-  const { students } = useAppSelector((state) => state.students);
-  const { grades } = useAppSelector((state) => state.grades);
+  const subjects = useAppSelector(selectSubjects);
+  const students = useAppSelector(selectStudents);
+  const grades = useAppSelector(selectGrades);
 
   useEffect(() => {
     dispatch(fetchSubjects());
@@ -78,6 +74,11 @@ const AddGradeForm: FC = () => {
       label: grade.value,
     }));
 
+  // Watch selected values via React Hook Form
+  const selectedStudent = watch('studentId');
+  const selectedSubject = watch('subject');
+  const selectedGrade = watch('gradeId');
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const newGrades = [
       {
@@ -100,9 +101,6 @@ const AddGradeForm: FC = () => {
       } else {
         console.log('Grade added successfully:', resultAction.payload);
         reset();
-        setSelectedStudent(null);
-        setSelectedSubject(null);
-        setSelectedGrade(null);
       }
     } catch (error) {
       console.error('Error adding grade:', error);
@@ -115,9 +113,10 @@ const AddGradeForm: FC = () => {
       <div>
         <Select
           options={studentOptions}
-          value={selectedStudent}
+          value={studentOptions.find(
+            (option) => option.value === selectedStudent
+          )}
           onChange={(selectedOption) => {
-            setSelectedStudent(selectedOption as SelectOption);
             setValue('studentId', (selectedOption as SelectOption).value);
           }}
           placeholder="Select student..."
@@ -133,9 +132,10 @@ const AddGradeForm: FC = () => {
       <div>
         <Select
           options={subjectOptions}
-          value={selectedSubject}
+          value={subjectOptions.find(
+            (option) => option.value === selectedSubject
+          )}
           onChange={(selectedOption) => {
-            setSelectedSubject(selectedOption as SelectOption);
             setValue('subject', (selectedOption as SelectOption).value);
           }}
           placeholder="Select subject..."
@@ -151,9 +151,8 @@ const AddGradeForm: FC = () => {
       <div>
         <Select
           options={gradeOptions}
-          value={selectedGrade}
+          value={gradeOptions.find((option) => option.value === selectedGrade)}
           onChange={(selectedOption) => {
-            setSelectedGrade(selectedOption as SelectOption);
             setValue('gradeId', (selectedOption as SelectOption).value);
           }}
           placeholder="Select grade..."

@@ -1,17 +1,29 @@
 import { useState, FC, useEffect } from 'react';
 import { FaTrash, FaCheck } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'; // Your custom hook
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fetchTodos,
   addTodo,
   toggleTodo,
   deleteTodo,
+  selectTodos,
+  selectTodosLoading,
+  selectTodosError,
 } from '../../redux/slices/todoSlice';
+import {
+  selectIsLoggedIn,
+  selectUser,
+} from '../../redux/slices/auth/authSlice.ts';
 
 const TodoList: FC = () => {
   const dispatch = useAppDispatch();
-  const { user, isLoggedIn } = useAppSelector((state) => state.auth);
-  const { todos, loading, error } = useAppSelector((state) => state.todos);
+  const user = useAppSelector(selectUser);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+
+  const todos = useAppSelector(selectTodos);
+  const loading = useAppSelector(selectTodosLoading);
+  const error = useAppSelector(selectTodosError);
+
   const [newTodo, setNewTodo] = useState<string>('');
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import {
   updateStudentWithGrades,
   deleteStudent,
 } from '../thunks/studentsThunks.ts';
+import { RootState } from '../store.ts';
 
 const initialState: StudentsState = {
   students: {},
@@ -71,5 +72,11 @@ const studentsSlice = createSlice({
       });
   },
 });
+export const selectStudents = (state: RootState) => state.students.students;
+export const selectStudentsTotalCount = (state: RootState) =>
+  state.students.totalCount;
+export const selectStudentsLoading = (state: RootState) =>
+  state.students.loading;
+export const selectStudentsError = (state: RootState) => state.students.error;
 
 export default studentsSlice.reducer;

@@ -8,7 +8,6 @@ const SubjectDashboard: FC = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  // Process data to calculate number of students per subject and average grade
   const subjectsSummary = formattedData.reduce(
     (acc, student) => {
       if (!student.subject) return acc;

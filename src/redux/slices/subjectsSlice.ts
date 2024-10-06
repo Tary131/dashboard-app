@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SubjectsState } from '../../types/types';
 import { addSubject, fetchSubjects } from '../thunks/subjectsThunks';
+import { RootState } from '../store.ts';
 
 const initialState: SubjectsState = {
   subjects: {},
@@ -34,5 +35,9 @@ const subjectsSlice = createSlice({
       });
   },
 });
-
+// Selectors
+export const selectSubjects = (state: RootState) => state.subjects.subjects;
+export const selectSubjectsLoading = (state: RootState) =>
+  state.subjects.loading;
+export const selectSubjectsError = (state: RootState) => state.subjects.error;
 export default subjectsSlice.reducer;

@@ -4,6 +4,10 @@ import { fetchSubjects } from '../redux/thunks/subjectsThunks.ts';
 import { fetchGrades } from '../redux/thunks/gradesThunks.ts';
 import { fetchStudents } from '../redux/thunks/studentsThunks.ts';
 import { fetchClasses } from '../redux/thunks/classesThunks.ts';
+import { selectClasses } from '../redux/slices/classesSlice.ts';
+import { selectGrades } from '../redux/slices/gradesSlice.ts';
+import { selectStudents } from '../redux/slices/studentsSlice.ts';
+import { selectSubjects } from '../redux/slices/subjectsSlice.ts';
 
 export interface Student {
   name: string;
@@ -15,10 +19,10 @@ export interface Student {
 
 const useFormattedStudentData = () => {
   const dispatch = useAppDispatch();
-  const { subjects } = useAppSelector((state) => state.subjects);
-  const { students } = useAppSelector((state) => state.students);
-  const { grades } = useAppSelector((state) => state.grades);
-  const { classes } = useAppSelector((state) => state.classes);
+  const subjects = useAppSelector(selectSubjects);
+  const students = useAppSelector(selectStudents);
+  const grades = useAppSelector(selectGrades);
+  const classes = useAppSelector(selectClasses);
 
   const [formattedData, setFormattedData] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);

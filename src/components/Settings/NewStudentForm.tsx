@@ -35,7 +35,7 @@ const NewStudentForm: FC = () => {
     },
   });
 
-  const [selectedClass, setSelectedClass] = useState<SelectOption | null>(null); // Single class selection
+  const [selectedClass, setSelectedClass] = useState<SelectOption | null>(null);
   const [selectedSubjects, setSelectedSubjects] = useState<SelectOption[]>([]);
 
   const dispatch = useAppDispatch();

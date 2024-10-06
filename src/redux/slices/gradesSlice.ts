@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchGrades } from '../thunks/gradesThunks.ts';
 import { GradesState } from '../../types/types.ts';
+import { RootState } from '../store.ts';
 
 const initialState: GradesState = {
   grades: {},
@@ -28,5 +29,9 @@ const gradesSlice = createSlice({
       });
   },
 });
+// Selectors
+export const selectGrades = (state: RootState) => state.grades.grades;
+export const selectGradesLoading = (state: RootState) => state.grades.loading;
+export const selectGradesError = (state: RootState) => state.grades.error;
 
 export default gradesSlice.reducer;

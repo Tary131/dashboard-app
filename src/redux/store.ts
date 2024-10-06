@@ -12,7 +12,7 @@ import calendarReducer from './slices/calendarSlice.ts';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth'], // Persist only the auth slice
+  whitelist: ['auth'],
 };
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 export const store = configureStore({

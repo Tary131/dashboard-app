@@ -6,7 +6,10 @@ const AverageGradesByTime = () => {
   const { formattedData, loading, error } = useFormattedStudentData();
 
   const { weeklyData } = useMemo(() => {
-    if (!formattedData.length) return { weeklyData: [] };
+    if (!formattedData.length)
+      return {
+        weeklyData: [],
+      };
 
     const weekMap: { total: number; count: number }[] = new Array(5)
       .fill(null)

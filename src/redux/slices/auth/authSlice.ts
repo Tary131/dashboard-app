@@ -6,6 +6,7 @@ import {
   updateProfile,
   signOut,
 } from 'firebase/auth';
+import { RootState } from '../../store.ts';
 
 interface User {
   id: string;
@@ -141,5 +142,7 @@ const authSlice = createSlice({
       });
   },
 });
-
+export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
+export const selectUser = (state: RootState) => state.auth.user;
+export const selectAuthError = (state: RootState) => state.auth.error;
 export default authSlice.reducer;

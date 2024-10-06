@@ -23,12 +23,12 @@ const Dashboard: FC = () => (
       title="Average Grades by Week"
       content={<AverageGradesByTime />}
       className="col-span-3 row-span-2"
-    />{' '}
+    />
     <Card
       title="Today day"
       content={getFormattedDate()}
       className="col-span-1 row-span-1"
-    />{' '}
+    />
     <Card
       title="Total class count"
       content={<ClassCountDisplay />}

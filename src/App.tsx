@@ -8,12 +8,18 @@ import Calendar from './components/Calendar/Calendar';
 import Settings from './components/Settings/Settings';
 import Header from './components/Header/Header';
 import { useAppSelector, useAppDispatch } from './redux/hooks';
-import { loginUser } from './redux/slices/auth/authSlice';
+import {
+  loginUser,
+  selectIsLoggedIn,
+  selectUser,
+} from './redux/slices/auth/authSlice';
 import { auth } from './firebase/firebaseConfig';
 import './i18n';
 
 const App: FC = () => {
-  const { user, isLoggedIn } = useAppSelector((state) => state.auth);
+  const user = useAppSelector(selectUser);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+
   const dispatch = useAppDispatch();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -49,7 +55,6 @@ const App: FC = () => {
             isLoggedIn={isLoggedIn}
             userName={user?.name}
             toggleDarkMode={toggleDarkMode}
-            isDarkMode={isDarkMode}
           />
           <div className="flex flex-grow">
             <Sidebar />

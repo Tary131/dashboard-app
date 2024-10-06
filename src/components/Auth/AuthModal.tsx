@@ -1,7 +1,12 @@
 import { FC, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { loginUser, registerUser } from '../../redux/slices/auth/authSlice.ts';
+import {
+  loginUser,
+  registerUser,
+  selectAuthError,
+  selectIsLoggedIn,
+} from '../../redux/slices/auth/authSlice.ts';
 import { useTranslation } from 'react-i18next';
 
 type AuthFormValues = {
@@ -26,8 +31,8 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
     formState: { errors },
   } = useForm<AuthFormValues>();
   const dispatch = useAppDispatch();
-  const authError = useAppSelector((state) => state.auth.error);
-  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const authError = useAppSelector(selectAuthError);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -48,7 +53,7 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
           })
         );
       } else {
-        return; // Handle password mismatch if needed
+        return; //todo handle password miss-match
       }
     } else {
       dispatch(loginUser(data));

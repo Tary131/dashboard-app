@@ -8,6 +8,7 @@ import {
   doc,
   deleteDoc,
 } from 'firebase/firestore';
+import { RootState } from '../store.ts';
 
 interface CalendarEvent {
   id: string;
@@ -121,5 +122,10 @@ const calendarSlice = createSlice({
       });
   },
 });
+// Selectors
+export const selectCalendarEvents = (state: RootState) => state.calendar.events;
+export const selectCalendarLoading = (state: RootState) =>
+  state.calendar.loading;
+export const selectCalendarError = (state: RootState) => state.calendar.error;
 
 export default calendarSlice.reducer;

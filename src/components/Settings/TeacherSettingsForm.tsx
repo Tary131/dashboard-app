@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { updateUser } from '../../redux/slices/auth/authSlice';
+import { selectUser, updateUser } from '../../redux/slices/auth/authSlice';
 import Input from './Input';
 import Button from './Button';
 
@@ -11,7 +11,7 @@ interface FormValues {
 
 const TeacherSettingsForm: FC = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector(selectUser);
 
   const {
     register,

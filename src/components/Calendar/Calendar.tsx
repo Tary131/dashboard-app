@@ -11,11 +11,23 @@ import {
   deleteCalendarEvent,
 } from '../../redux/slices/calendarSlice';
 import CalendarModal from './CalendarModal';
+import {
+  selectIsLoggedIn,
+  selectUser,
+} from '../../redux/slices/auth/authSlice.ts';
+import {
+  selectCalendarEvents,
+  selectCalendarLoading,
+  selectCalendarError,
+} from '../../redux/slices/calendarSlice.ts';
 
 const Calendar: FC = () => {
   const dispatch = useAppDispatch();
-  const { user, isLoggedIn } = useAppSelector((state) => state.auth);
-  const { events, loading, error } = useAppSelector((state) => state.calendar);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const user = useAppSelector(selectUser);
+  const events = useAppSelector(selectCalendarEvents);
+  const loading = useAppSelector(selectCalendarLoading);
+  const error = useAppSelector(selectCalendarError);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<EventInput | null>(null);
   const [defaultStartTime, setDefaultStartTime] = useState('');
@@ -88,7 +100,7 @@ const Calendar: FC = () => {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay',
         }}
-        eventColor="#374151"
+        eventColor="#374151" //todo colors dynamic
         dayMaxEventRows={3}
         fixedWeekCount={false}
         eventTextColor="white"

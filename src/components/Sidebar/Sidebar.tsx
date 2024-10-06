@@ -9,10 +9,14 @@ import {
   BsCalendar2DayFill,
 } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { logoutUser } from '../../redux/slices/auth/authSlice';
+import {
+  logoutUser,
+  selectIsLoggedIn,
+  selectUser,
+} from '../../redux/slices/auth/authSlice';
 import AuthModal from '../Auth/AuthModal.tsx';
 import { useTranslation } from 'react-i18next';
-import { US, CZ } from 'country-flag-icons/react/3x2'; // Import flags directly
+import { US, CZ } from 'country-flag-icons/react/3x2';
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
@@ -35,7 +39,8 @@ const Sidebar: FC = () => {
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const { isLoggedIn, user } = useAppSelector((state) => state.auth);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const user = useAppSelector(selectUser);
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
@@ -56,7 +61,7 @@ const Sidebar: FC = () => {
       <US style={{ width: '24px', height: 'auto' }} />
     ) : (
       <CZ style={{ width: '24px', height: 'auto' }} />
-    ); // Use the flags
+    );
 
   return (
     <div className="flex h-screen">
