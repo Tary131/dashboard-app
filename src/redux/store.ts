@@ -8,6 +8,7 @@ import gradesReducer from './slices/gradesSlice.ts';
 import authReducer from './slices/auth/authSlice.ts';
 import todoReducer from './slices/todoSlice.ts';
 import calendarReducer from './slices/calendarSlice.ts';
+import darkModeReducer from './slices/darkMode/darkModeSlice.ts';
 
 const persistConfig = {
   key: 'root',
@@ -24,6 +25,7 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     todos: todoReducer,
     calendar: calendarReducer,
+    darkMode: darkModeReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

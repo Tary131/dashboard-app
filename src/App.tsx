@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar';
 import Students from './components/Students/Students';
@@ -15,17 +15,23 @@ import {
 } from './redux/slices/auth/authSlice';
 import { auth } from './firebase/firebaseConfig';
 import './i18n';
+import {
+  toggleDarkMode,
+  selectIsDarkMode,
+  setDarkMode,
+} from './redux/slices/darkMode/darkModeSlice.ts';
 
 const App: FC = () => {
   const user = useAppSelector(selectUser);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-
+  const isDarkMode = useAppSelector(selectIsDarkMode);
   const dispatch = useAppDispatch();
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark') setIsDarkMode(true);
+    if (storedTheme === 'dark') {
+      dispatch(setDarkMode(true));
+    }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -42,11 +48,6 @@ const App: FC = () => {
     return () => unsubscribe();
   }, [dispatch]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
-  };
-
   return (
     <div className={isDarkMode ? 'dark' : ''}>
       <Router>
@@ -54,7 +55,7 @@ const App: FC = () => {
           <Header
             isLoggedIn={isLoggedIn}
             userName={user?.name}
-            toggleDarkMode={toggleDarkMode}
+            toggleDarkMode={() => dispatch(toggleDarkMode())}
           />
           <div className="flex flex-grow">
             <Sidebar />
