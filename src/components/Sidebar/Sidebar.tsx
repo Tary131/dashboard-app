@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   BsArrowLeftShort,
@@ -40,6 +40,18 @@ const Sidebar: FC = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const user = useAppSelector(selectUser);
 
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebar-open');
+    if (savedState !== null) {
+      setOpen(JSON.parse(savedState));
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    const newOpenState = !open;
+    setOpen(newOpenState);
+    localStorage.setItem('sidebar-open', JSON.stringify(newOpenState));
+  };
   const handleAuthClick = () => {
     if (isLoggedIn) {
       dispatch(logoutUser());
@@ -70,7 +82,7 @@ const Sidebar: FC = () => {
           className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white text-3xl rounded-full absolute -right-3 top-8 border border-black cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600 transition-transform duration-300 ${
             !open && 'rotate-180'
           }`}
-          onClick={() => setOpen(!open)}
+          onClick={toggleSidebar}
         />
 
         <ul className="flex-grow space-y-2">
