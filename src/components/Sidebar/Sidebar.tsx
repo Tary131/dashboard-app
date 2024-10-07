@@ -14,7 +14,6 @@ import {
   selectIsLoggedIn,
   selectUser,
 } from '../../redux/slices/auth/authSlice';
-import AuthModal from '../Auth/AuthModal.tsx';
 import { useTranslation } from 'react-i18next';
 import { US, CZ } from 'country-flag-icons/react/3x2';
 
@@ -36,7 +35,6 @@ const menuItems: MenuItem[] = [
 const Sidebar: FC = () => {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(true);
-  const [showModal, setShowModal] = useState(false);
   const location = useLocation();
   const dispatch = useAppDispatch();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
@@ -45,8 +43,6 @@ const Sidebar: FC = () => {
   const handleAuthClick = () => {
     if (isLoggedIn) {
       dispatch(logoutUser());
-    } else {
-      setShowModal(true);
     }
   };
 
@@ -137,8 +133,6 @@ const Sidebar: FC = () => {
           </div>
         </div>
       </div>
-
-      <AuthModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 };

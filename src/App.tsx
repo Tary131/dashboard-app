@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar';
 import Students from './components/Students/Students';
@@ -20,12 +20,16 @@ import {
   selectIsDarkMode,
   setDarkMode,
 } from './redux/slices/darkMode/darkModeSlice.ts';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
+import AuthModal from './components/Auth/AuthModal';
 
 const App: FC = () => {
   const user = useAppSelector(selectUser);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const isDarkMode = useAppSelector(selectIsDarkMode);
   const dispatch = useAppDispatch();
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
@@ -43,10 +47,18 @@ const App: FC = () => {
           })
         );
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [dispatch]);
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className={isDarkMode ? 'dark' : ''}>
@@ -61,16 +73,32 @@ const App: FC = () => {
             <Sidebar />
             <main className="flex-1 p-5 min-h-screen bg-white dark:bg-gray-900 transition duration-300">
               <Routes>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/students" element={<Students />} />
-                <Route path="/subjects" element={<Subjects />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/settings" element={<Settings />} />
+                <Route
+                  path="/dashboard"
+                  element={<ProtectedRoute element={<Dashboard />} />}
+                />
+                <Route
+                  path="/students"
+                  element={<ProtectedRoute element={<Students />} />}
+                />
+                <Route
+                  path="/subjects"
+                  element={<ProtectedRoute element={<Subjects />} />}
+                />
+                <Route
+                  path="/calendar"
+                  element={<ProtectedRoute element={<Calendar />} />}
+                />
+                <Route
+                  path="/settings"
+                  element={<ProtectedRoute element={<Settings />} />}
+                />
               </Routes>
             </main>
           </div>
         </div>
       </Router>
+      <AuthModal isOpen={!isLoggedIn && !loading} onClose={() => {}} />
     </div>
   );
 };
