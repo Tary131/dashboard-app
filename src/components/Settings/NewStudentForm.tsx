@@ -8,6 +8,9 @@ import { addStudent } from '../../redux/thunks/studentsThunks';
 import { fetchClasses } from '../../redux/thunks/classesThunks';
 import Button from './Button';
 import Input from './Input';
+import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
+import { selectClasses } from '../../redux/slices/classesSlice.ts';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
 
 type SelectOption = {
   value: string;
@@ -15,9 +18,9 @@ type SelectOption = {
 };
 
 interface FormValues {
-  fullName: string;
-  classes: string;
-  subjects: string[];
+  [FIELD_NAMES.FULL_NAME]: string;
+  [FIELD_NAMES.CLASSES]: string;
+  [FIELD_NAMES.SUBJECTS]: string[];
 }
 
 const NewStudentForm: FC = () => {
@@ -29,9 +32,9 @@ const NewStudentForm: FC = () => {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      fullName: '',
-      classes: '',
-      subjects: [],
+      [FIELD_NAMES.FULL_NAME]: '',
+      [FIELD_NAMES.CLASSES]: '',
+      [FIELD_NAMES.SUBJECTS]: [],
     },
   });
 
@@ -39,8 +42,8 @@ const NewStudentForm: FC = () => {
   const [selectedSubjects, setSelectedSubjects] = useState<SelectOption[]>([]);
 
   const dispatch = useAppDispatch();
-  const { subjects } = useAppSelector((state) => state.subjects);
-  const { classes } = useAppSelector((state) => state.classes);
+  const subjects = useAppSelector(selectSubjects);
+  const classes = useAppSelector(selectClasses);
 
   useEffect(() => {
     dispatch(fetchSubjects());
@@ -93,7 +96,9 @@ const NewStudentForm: FC = () => {
         label="Full Name"
         id="fullName"
         error={errors.fullName?.message}
-        {...register('fullName', { required: 'Full name is required' })}
+        {...register(FIELD_NAMES.FULL_NAME, {
+          required: 'Full name is required',
+        })}
         placeholder="Enter full name"
         className="block w-full py-2 px-4 mt-1"
       />
@@ -104,7 +109,7 @@ const NewStudentForm: FC = () => {
         value={selectedClass}
         onChange={(selectedOption) => {
           setSelectedClass(selectedOption as SelectOption);
-          setValue('classes', (selectedOption as SelectOption).value);
+          setValue(FIELD_NAMES.CLASSES, (selectedOption as SelectOption).value);
         }}
         placeholder="Select a class..."
         className="basic-single"
@@ -119,7 +124,7 @@ const NewStudentForm: FC = () => {
         onChange={(selectedOptions) => {
           setSelectedSubjects(selectedOptions as SelectOption[]);
           setValue(
-            'subjects',
+            FIELD_NAMES.SUBJECTS,
             (selectedOptions as SelectOption[]).map((option) => option.value)
           );
         }}

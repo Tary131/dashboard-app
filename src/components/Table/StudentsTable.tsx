@@ -29,7 +29,7 @@ const StudentsTable: FC = () => {
   const sortedData = useMemo(
     () =>
       formattedData.length > 0
-        ? sortData(formattedData, sortKey, sortOrder)
+        ? sortData(formattedData, sortKey, sortOrder) //todo
         : [],
     [formattedData, sortKey, sortOrder]
   );

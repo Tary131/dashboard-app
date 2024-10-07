@@ -12,6 +12,8 @@ import Input from './Input';
 import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
 import { selectStudents } from '../../redux/slices/studentsSlice.ts';
 import { selectGrades } from '../../redux/slices/gradesSlice.ts';
+import { customSelectStyles } from '../custom/customSelectStyles.ts';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
 
 type SelectOption = {
   value: string;
@@ -19,10 +21,10 @@ type SelectOption = {
 };
 
 interface FormValues {
-  studentId: string;
-  subject: string;
-  gradeId: string;
-  description: string;
+  [FIELD_NAMES.STUDENT_ID]: string;
+  [FIELD_NAMES.SUBJECT]: string;
+  [FIELD_NAMES.GRADE_ID]: string;
+  [FIELD_NAMES.DESCRIPTION]: string;
 }
 
 const AddGradeForm: FC = () => {
@@ -35,10 +37,10 @@ const AddGradeForm: FC = () => {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      studentId: '',
-      subject: '',
-      gradeId: '',
-      description: '',
+      [FIELD_NAMES.STUDENT_ID]: '',
+      [FIELD_NAMES.SUBJECT]: '',
+      [FIELD_NAMES.GRADE_ID]: '',
+      [FIELD_NAMES.DESCRIPTION]: '',
     },
   });
 
@@ -74,24 +76,23 @@ const AddGradeForm: FC = () => {
       label: grade.value,
     }));
 
-  // Watch selected values via React Hook Form
-  const selectedStudent = watch('studentId');
-  const selectedSubject = watch('subject');
-  const selectedGrade = watch('gradeId');
+  const selectedStudent = watch(FIELD_NAMES.STUDENT_ID);
+  const selectedSubject = watch(FIELD_NAMES.SUBJECT);
+  const selectedGrade = watch(FIELD_NAMES.GRADE_ID);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const newGrades = [
       {
-        subjectId: data.subject,
-        grade: data.gradeId,
-        description: data.description,
+        subjectId: data[FIELD_NAMES.SUBJECT],
+        grade: data[FIELD_NAMES.GRADE_ID],
+        description: data[FIELD_NAMES.DESCRIPTION],
       },
     ];
 
     try {
       const resultAction = await dispatch(
         updateStudentWithGrades({
-          studentId: data.studentId,
+          studentId: data[FIELD_NAMES.STUDENT_ID],
           newGrades,
         })
       );
@@ -117,13 +118,16 @@ const AddGradeForm: FC = () => {
             (option) => option.value === selectedStudent
           )}
           onChange={(selectedOption) => {
-            setValue('studentId', (selectedOption as SelectOption).value);
+            setValue(
+              FIELD_NAMES.STUDENT_ID,
+              (selectedOption as SelectOption).value
+            );
           }}
           placeholder="Select student..."
           className="basic-select"
           classNamePrefix="select"
         />
-        {errors.studentId && (
+        {errors[FIELD_NAMES.STUDENT_ID] && (
           <p className="text-red-600 text-sm mt-1">Student is required.</p>
         )}
       </div>
@@ -136,13 +140,17 @@ const AddGradeForm: FC = () => {
             (option) => option.value === selectedSubject
           )}
           onChange={(selectedOption) => {
-            setValue('subject', (selectedOption as SelectOption).value);
+            setValue(
+              FIELD_NAMES.SUBJECT,
+              (selectedOption as SelectOption).value
+            );
           }}
           placeholder="Select subject..."
           className="basic-select"
           classNamePrefix="select"
+          styles={customSelectStyles}
         />
-        {errors.subject && (
+        {errors[FIELD_NAMES.SUBJECT] && (
           <p className="text-red-600 text-sm mt-1">Subject is required.</p>
         )}
       </div>
@@ -153,13 +161,16 @@ const AddGradeForm: FC = () => {
           options={gradeOptions}
           value={gradeOptions.find((option) => option.value === selectedGrade)}
           onChange={(selectedOption) => {
-            setValue('gradeId', (selectedOption as SelectOption).value);
+            setValue(
+              FIELD_NAMES.GRADE_ID,
+              (selectedOption as SelectOption).value
+            );
           }}
           placeholder="Select grade..."
           className="basic-select"
           classNamePrefix="select"
         />
-        {errors.gradeId && (
+        {errors[FIELD_NAMES.GRADE_ID] && (
           <p className="text-red-600 text-sm mt-1">Grade is required.</p>
         )}
       </div>
@@ -169,7 +180,7 @@ const AddGradeForm: FC = () => {
         <Input
           label="Description (optional)"
           id="description"
-          {...register('description')}
+          {...register(FIELD_NAMES.DESCRIPTION)}
           className="block w-full py-2 px-4 mt-1"
         />
       </div>

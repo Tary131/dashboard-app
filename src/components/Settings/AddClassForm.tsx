@@ -4,9 +4,10 @@ import { useAppDispatch } from '../../redux/hooks';
 import { addClass } from '../../redux/thunks/classesThunks';
 import Button from './Button.tsx';
 import Input from './Input';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
 
 interface FormValues {
-  name: string;
+  [FIELD_NAMES.NAME]: string;
 }
 
 const AddClassForm: FC = () => {
@@ -15,12 +16,16 @@ const AddClassForm: FC = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: {
+      [FIELD_NAMES.NAME]: '',
+    },
+  });
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const classData = {
-      name: data.name,
+      name: data[FIELD_NAMES.NAME],
     };
 
     try {
@@ -45,7 +50,7 @@ const AddClassForm: FC = () => {
         label="Class Name"
         id="name"
         error={errors.name?.message}
-        {...register('name', { required: 'Class name is required' })}
+        {...register(FIELD_NAMES.NAME, { required: 'Class name is required' })}
         className="block w-full py-2 px-4 mt-1"
       />
       <Button label={'Add class'} type="submit" />

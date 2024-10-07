@@ -4,9 +4,10 @@ import { useAppDispatch } from '../../redux/hooks';
 import { addSubject } from '../../redux/thunks/subjectsThunks';
 import Button from './Button';
 import Input from './Input';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
 
 interface FormValues {
-  name: string;
+  [FIELD_NAMES.NAME]: string;
 }
 
 const AddSubjectForm: FC = () => {
@@ -17,7 +18,7 @@ const AddSubjectForm: FC = () => {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      name: '',
+      [FIELD_NAMES.NAME]: '',
     },
   });
 
@@ -25,7 +26,7 @@ const AddSubjectForm: FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const subjectData = {
-      name: data.name,
+      name: data[FIELD_NAMES.NAME],
     };
 
     try {
@@ -51,7 +52,9 @@ const AddSubjectForm: FC = () => {
         label="Subject Name"
         id="name"
         error={errors.name?.message}
-        {...register('name', { required: 'Subject name is required' })}
+        {...register(FIELD_NAMES.NAME, {
+          required: 'Subject name is required',
+        })}
         placeholder="Enter subject name"
         className="block w-full py-2 px-4 mt-1"
       />
