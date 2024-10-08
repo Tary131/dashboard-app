@@ -21,7 +21,6 @@ const COLORS = [
 
 const GradePieChart: React.FC = () => {
   const { formattedData, loading, error } = useFormattedStudentData();
-  console.log('Formatted Data:', formattedData);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 

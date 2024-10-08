@@ -12,6 +12,7 @@ import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
 import { selectClasses } from '../../redux/slices/classesSlice.ts';
 import { FIELD_NAMES } from '../../constants/formConstants.ts';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 type SelectOption = {
   value: string;
@@ -76,13 +77,13 @@ const NewStudentForm: FC = () => {
     try {
       const resultAction = await dispatch(addStudent(studentData));
       if (addStudent.rejected.match(resultAction)) {
-        console.error(t('error.addStudent'));
+        toast.error(t('error.addStudent'));
       } else {
-        console.log(t('success.addStudent'));
+        toast.error(t('success.addStudent'));
         reset();
       }
     } catch (error) {
-      console.error(t('error.addingStudent'));
+      toast.error(t('error.addingStudent'));
     }
   };
 
@@ -144,11 +145,7 @@ const NewStudentForm: FC = () => {
           <p className="text-red-600">{t('form.subjectsRequired')}</p>
         )}
       </div>
-      <Button
-        label={t('form.addStudent')}
-        type="submit"
-        className="w-full bg-green-500"
-      />
+      <Button label={t('form.addStudent')} type="submit" />
     </form>
   );
 };

@@ -5,7 +5,8 @@ import { addClass } from '../../redux/thunks/classesThunks';
 import Button from './Button';
 import Input from './Input';
 import { FIELD_NAMES } from '../../constants/formConstants';
-import { useTranslation } from 'react-i18next'; // i18n hook
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 interface FormValues {
   [FIELD_NAMES.NAME]: string;
@@ -29,13 +30,13 @@ const AddClassForm: FC = () => {
     try {
       const resultAction = await dispatch(addClass(classData));
       if (addClass.rejected.match(resultAction)) {
-        console.error(t('error.addClass'));
+        toast.error(t('error.addClass'));
       } else {
-        console.log(t('success.addClass'));
+        toast.success(t('success.addClass'));
         reset();
       }
     } catch (error) {
-      console.error(t('error.addingClass'));
+      toast.error(t('error.addingClass'));
     }
   };
 

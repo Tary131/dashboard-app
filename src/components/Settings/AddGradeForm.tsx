@@ -15,6 +15,7 @@ import { selectGrades } from '../../redux/slices/gradesSlice.ts';
 import { customSelectStyles } from '../custom/customSelectStyles.ts';
 import { FIELD_NAMES } from '../../constants/formConstants.ts';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 type SelectOption = {
   value: string;
@@ -100,13 +101,13 @@ const AddGradeForm: FC = () => {
       );
 
       if (updateStudentWithGrades.rejected.match(resultAction)) {
-        console.error(t('error.addGrade'));
+        toast.error(t('error.addGrade'));
       } else {
-        console.log(t('success.addGrade'));
+        toast.success(t('success.addGrade'));
         reset();
       }
     } catch (error) {
-      console.error(t('error.addingGrade'));
+      toast.error(t('error.addingGrade'));
     }
   };
 
@@ -191,7 +192,7 @@ const AddGradeForm: FC = () => {
         />
       </div>
 
-      <Button label="Add Grade" type="submit" className="w-full" />
+      <Button label={t('form.addGrade')} type="submit" className="w-full" />
     </form>
   );
 };

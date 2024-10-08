@@ -8,7 +8,7 @@ import {
   selectIsLoggedIn,
 } from '../../redux/slices/auth/authSlice.ts';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 type AuthFormValues = {
   email: string;
@@ -35,13 +35,11 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const authError = useAppSelector(selectAuthError);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
       reset();
       onClose();
-      navigate('/dashboard');
     }
   }, [isLoggedIn, reset, onClose]);
 
@@ -54,12 +52,21 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
             password: data.password,
             name: data.name || '',
           })
-        );
+        ).then((result) => {
+          if (result.meta.requestStatus === 'fulfilled') {
+            toast.success(t('auth.registerSuccess'));
+          }
+        });
       } else {
+        toast.error(t('auth.passwordMismatch'));
         return; //todo handle password miss-match
       }
     } else {
-      dispatch(loginUser(data));
+      dispatch(loginUser(data)).then((result) => {
+        if (result.meta.requestStatus === 'fulfilled') {
+          toast.success(t('auth.loginSuccess')); // Show success toast
+        }
+      });
     }
   };
 
@@ -168,7 +175,7 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 dark:text-gray-400"
+          className="absolute top-2 right-2 text-gray-600 dark:text-gray-400 hover:text-red-500"
         >
           X
         </button>

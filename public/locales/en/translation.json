@@ -23,7 +23,10 @@
     "toggle": {
       "toLogin": "Already have an account? Login",
       "toRegister": "Need an account? Register"
-    }
+    },
+    "passwordMismatch": "Passwords do not match. Please try again.",
+    "registerSuccess": "Registration successful! Welcome aboard!",
+    "loginSuccess": "Login successful! Welcome back!"
   },
   "dashboard": {
     "avg-grade-week": "Average Grades by Week",

@@ -19,7 +19,7 @@ const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
           id={id}
           className={`
             block w-full py-2 px-4 mt-1 text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm
-            focus:outline-none focus:ring-green-500 focus:border-green-500
+            focus:outline-none focus:ring-blue-500 focus:border-blue-500
             dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400
             ${className} 
           `}

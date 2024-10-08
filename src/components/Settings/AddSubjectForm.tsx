@@ -5,14 +5,15 @@ import { addSubject } from '../../redux/thunks/subjectsThunks';
 import Button from './Button';
 import Input from './Input';
 import { FIELD_NAMES } from '../../constants/formConstants';
-import { useTranslation } from 'react-i18next'; // i18n hook
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 interface FormValues {
   [FIELD_NAMES.NAME]: string;
 }
 
 const AddSubjectForm: FC = () => {
-  const { t } = useTranslation(); // i18n hook
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -29,13 +30,13 @@ const AddSubjectForm: FC = () => {
     try {
       const resultAction = await dispatch(addSubject(subjectData));
       if (addSubject.rejected.match(resultAction)) {
-        console.error(t('error.addSubject'));
+        toast.error(t('error.addSubject'));
       } else {
-        console.log(t('success.addSubject'));
+        toast.success(t('success.addSubject'));
         reset();
       }
     } catch (error) {
-      console.error(t('error.addingSubject'));
+      toast.error(t('error.addingSubject'));
     }
   };
 

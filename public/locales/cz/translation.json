@@ -23,7 +23,10 @@
     "toggle": {
       "toLogin": "Máte účet? Přihlaste se",
       "toRegister": "Potřebujete účet? Registrovat"
-    }
+    },
+    "passwordMismatch": "Hesla se neshodují. Zkuste to prosím znovu.",
+    "registerSuccess": "Registrace byla úspěšná! Vítejte!",
+    "loginSuccess": "Přihlášení bylo úspěšné! Vítejte zpět!"
   },
   "dashboard": {
     "avg-grade-week": "Průměrné známky za týden",

@@ -22,6 +22,8 @@ import {
 } from './redux/slices/darkMode/darkModeSlice.ts';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
 import AuthModal from './components/Auth/AuthModal';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: FC = () => {
   const user = useAppSelector(selectUser);
@@ -98,6 +100,7 @@ const App: FC = () => {
       </div>
 
       <AuthModal isOpen={!isLoggedIn && !loading} onClose={() => {}} />
+      <ToastContainer />
     </div>
   );
 };
