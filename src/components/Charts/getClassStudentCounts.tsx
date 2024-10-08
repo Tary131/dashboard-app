@@ -18,6 +18,6 @@ export const getClassStudentCounts = (students: Student[]) => {
 
   return Object.keys(classStudentCount).map((className) => ({
     className,
-    students: classStudentCount[className].size, //todo check if working correct before merge
+    students: classStudentCount[className].size, //todo check if working correct
   }));
 };

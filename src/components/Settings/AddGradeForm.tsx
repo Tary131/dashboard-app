@@ -14,6 +14,7 @@ import { selectStudents } from '../../redux/slices/studentsSlice.ts';
 import { selectGrades } from '../../redux/slices/gradesSlice.ts';
 import { customSelectStyles } from '../custom/customSelectStyles.ts';
 import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { useTranslation } from 'react-i18next';
 
 type SelectOption = {
   value: string;
@@ -28,6 +29,7 @@ interface FormValues {
 }
 
 const AddGradeForm: FC = () => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -98,13 +100,13 @@ const AddGradeForm: FC = () => {
       );
 
       if (updateStudentWithGrades.rejected.match(resultAction)) {
-        console.error('Failed to add grade:', resultAction.payload);
+        console.error(t('error.addGrade'));
       } else {
-        console.log('Grade added successfully:', resultAction.payload);
+        console.log(t('success.addGrade'));
         reset();
       }
     } catch (error) {
-      console.error('Error adding grade:', error);
+      console.error(t('error.addingGrade'));
     }
   };
 
@@ -123,12 +125,14 @@ const AddGradeForm: FC = () => {
               (selectedOption as SelectOption).value
             );
           }}
-          placeholder="Select student..."
+          placeholder={t('form.selectStudent')}
           className="basic-select"
           classNamePrefix="select"
         />
         {errors[FIELD_NAMES.STUDENT_ID] && (
-          <p className="text-red-600 text-sm mt-1">Student is required.</p>
+          <p className="text-red-600 text-sm mt-1">
+            {t('form.studentRequired')}
+          </p>
         )}
       </div>
 
@@ -145,13 +149,15 @@ const AddGradeForm: FC = () => {
               (selectedOption as SelectOption).value
             );
           }}
-          placeholder="Select subject..."
+          placeholder={t('form.selectSubject')}
           className="basic-select"
           classNamePrefix="select"
           styles={customSelectStyles}
         />
         {errors[FIELD_NAMES.SUBJECT] && (
-          <p className="text-red-600 text-sm mt-1">Subject is required.</p>
+          <p className="text-red-600 text-sm mt-1">
+            {t('form.subjectRequired')}
+          </p>
         )}
       </div>
 
@@ -166,19 +172,19 @@ const AddGradeForm: FC = () => {
               (selectedOption as SelectOption).value
             );
           }}
-          placeholder="Select grade..."
+          placeholder={t('form.selectGrade')}
           className="basic-select"
           classNamePrefix="select"
         />
         {errors[FIELD_NAMES.GRADE_ID] && (
-          <p className="text-red-600 text-sm mt-1">Grade is required.</p>
+          <p className="text-red-600 text-sm mt-1">{t('form.gradeRequired')}</p>
         )}
       </div>
 
       {/* Description input */}
       <div>
         <Input
-          label="Description (optional)"
+          label={t('form.description')}
           id="description"
           {...register(FIELD_NAMES.DESCRIPTION)}
           className="block w-full py-2 px-4 mt-1"

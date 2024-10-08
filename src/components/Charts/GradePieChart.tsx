@@ -21,12 +21,12 @@ const COLORS = [
 
 const GradePieChart: React.FC = () => {
   const { formattedData, loading, error } = useFormattedStudentData();
-
+  console.log('Formatted Data:', formattedData);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   const data = getClassStudentCounts(formattedData);
-
+  console.log(data);
   return (
     <div className="w-full h-64 md:h-80 lg:h-96">
       <ResponsiveContainer>

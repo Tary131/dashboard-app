@@ -11,6 +11,7 @@ import Input from './Input';
 import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
 import { selectClasses } from '../../redux/slices/classesSlice.ts';
 import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { useTranslation } from 'react-i18next';
 
 type SelectOption = {
   value: string;
@@ -24,6 +25,7 @@ interface FormValues {
 }
 
 const NewStudentForm: FC = () => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -73,17 +75,14 @@ const NewStudentForm: FC = () => {
 
     try {
       const resultAction = await dispatch(addStudent(studentData));
-
       if (addStudent.rejected.match(resultAction)) {
-        console.error('Failed to add student:', resultAction.payload);
+        console.error(t('error.addStudent'));
       } else {
-        console.log('Student added successfully:', resultAction.payload);
+        console.log(t('success.addStudent'));
         reset();
-        setSelectedClass(null);
-        setSelectedSubjects([]);
       }
     } catch (error) {
-      console.error('Error adding student:', error);
+      console.error(t('error.addingStudent'));
     }
   };
 
@@ -93,48 +92,60 @@ const NewStudentForm: FC = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <Input
-        label="Full Name"
+        label={t('form.fullName')}
         id="fullName"
         error={errors.fullName?.message}
         {...register(FIELD_NAMES.FULL_NAME, {
-          required: 'Full name is required',
+          required: t('form.fullNameRequired'),
         })}
-        placeholder="Enter full name"
+        placeholder={t('form.enterFullName')}
         className="block w-full py-2 px-4 mt-1"
       />
 
       {/* Classes single-select */}
-      <Select
-        options={classOptions}
-        value={selectedClass}
-        onChange={(selectedOption) => {
-          setSelectedClass(selectedOption as SelectOption);
-          setValue(FIELD_NAMES.CLASSES, (selectedOption as SelectOption).value);
-        }}
-        placeholder="Select a class..."
-        className="basic-single"
-        classNamePrefix="select"
-      />
+      <div>
+        <Select
+          options={classOptions}
+          value={selectedClass}
+          onChange={(selectedOption) => {
+            setSelectedClass(selectedOption as SelectOption);
+            setValue(
+              FIELD_NAMES.CLASSES,
+              (selectedOption as SelectOption).value
+            );
+          }}
+          placeholder={t('form.selectClass')}
+          className="basic-single"
+          classNamePrefix="select"
+        />
+        {errors[FIELD_NAMES.CLASSES] && (
+          <p className="text-red-600">{t('form.classRequired')}</p>
+        )}
+      </div>
 
       {/* Subjects multi-select */}
-      <Select
-        isMulti
-        options={subjectOptions}
-        value={selectedSubjects}
-        onChange={(selectedOptions) => {
-          setSelectedSubjects(selectedOptions as SelectOption[]);
-          setValue(
-            FIELD_NAMES.SUBJECTS,
-            (selectedOptions as SelectOption[]).map((option) => option.value)
-          );
-        }}
-        placeholder="Select subjects..."
-        className="basic-multi-select"
-        classNamePrefix="select"
-      />
-
+      <div>
+        <Select
+          isMulti
+          options={subjectOptions}
+          value={selectedSubjects}
+          onChange={(selectedOptions) => {
+            setSelectedSubjects(selectedOptions as SelectOption[]);
+            setValue(
+              FIELD_NAMES.SUBJECTS,
+              (selectedOptions as SelectOption[]).map((option) => option.value)
+            );
+          }}
+          placeholder={t('form.selectSubjects')}
+          className="basic-multi-select"
+          classNamePrefix="select"
+        />
+        {errors[FIELD_NAMES.SUBJECTS] && (
+          <p className="text-red-600">{t('form.subjectsRequired')}</p>
+        )}
+      </div>
       <Button
-        label="Add Student"
+        label={t('form.addStudent')}
         type="submit"
         className="w-full bg-green-500"
       />

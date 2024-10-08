@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Student {
   name: string;
@@ -20,33 +21,39 @@ const TableHeader: FC<TableHeaderProps> = ({
   sortOrder,
   handleSort,
   toggleSortOrder,
-}) => (
-  <tr>
-    {(
-      ['name', 'grade', 'subject', 'class', 'date'] as Array<keyof Student>
-    ).map((key) => (
-      <th key={key} className="p-2 text-left text-gray-700 dark:text-gray-300">
-        <div
-          className="flex items-center gap-2 cursor-pointer group"
-          onClick={() => handleSort(key)}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <tr>
+      {(
+        ['name', 'grade', 'subject', 'class', 'date'] as Array<keyof Student>
+      ).map((key) => (
+        <th
+          key={key}
+          className="p-2 text-left text-gray-700 dark:text-gray-300"
         >
-          <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
-          {sortKey === key && (
-            <button
-              className="text-sm text-blue-500 dark:text-blue-300"
-              onClick={toggleSortOrder}
-            >
-              {sortOrder === 'asc' ? '▲' : '▼'}
-            </button>
-          )}
-          {/* Hover tooltip */}
-          <span className="hidden group-hover:inline text-xs text-gray-500 dark:text-gray-400">
-            Click to sort
-          </span>
-        </div>
-      </th>
-    ))}
-  </tr>
-);
+          <div
+            className="flex items-center gap-2 cursor-pointer group"
+            onClick={() => handleSort(key)}
+          >
+            <span>{t(`table.${key}`)}</span>
+            {sortKey === key && (
+              <button
+                className="text-sm text-blue-500 dark:text-blue-300"
+                onClick={toggleSortOrder}
+              >
+                {sortOrder === 'asc' ? '▲' : '▼'}
+              </button>
+            )}
+            {/* Hover tooltip */}
+            <span className="hidden group-hover:inline text-xs text-gray-500 dark:text-gray-400">
+              {t('table.clickToSort')}
+            </span>
+          </div>
+        </th>
+      ))}
+    </tr>
+  );
+};
 
 export default TableHeader;

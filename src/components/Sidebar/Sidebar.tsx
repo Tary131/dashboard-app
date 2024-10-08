@@ -7,15 +7,17 @@ import {
   BsGearFill,
   BsReverseListColumnsReverse,
   BsCalendar2DayFill,
+  BsFillUnlockFill,
+  BsFillLockFill,
 } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   logoutUser,
   selectIsLoggedIn,
-  selectUser,
 } from '../../redux/slices/auth/authSlice';
 import { useTranslation } from 'react-i18next';
 import { US, CZ } from 'country-flag-icons/react/3x2';
+import { LOCAL_STORAGE_KEYS } from '../../constants/localStorageConstants';
 
 type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
@@ -34,24 +36,29 @@ const menuItems: MenuItem[] = [
 
 const Sidebar: FC = () => {
   const { t, i18n } = useTranslation();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const dispatch = useAppDispatch();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const user = useAppSelector(selectUser);
 
   useEffect(() => {
-    const savedState = localStorage.getItem('sidebar-open');
+    const savedState = localStorage.getItem(LOCAL_STORAGE_KEYS.SIDEBAR_OPEN);
     if (savedState !== null) {
       setOpen(JSON.parse(savedState));
     }
   }, []);
 
   const toggleSidebar = () => {
-    const newOpenState = !open;
-    setOpen(newOpenState);
-    localStorage.setItem('sidebar-open', JSON.stringify(newOpenState));
+    setOpen((prevOpen) => {
+      const newState = !prevOpen;
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.SIDEBAR_OPEN,
+        JSON.stringify(newState)
+      );
+      return newState;
+    });
   };
+
   const handleAuthClick = () => {
     if (isLoggedIn) {
       dispatch(logoutUser());
@@ -60,10 +67,9 @@ const Sidebar: FC = () => {
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
-    localStorage.setItem('user-lang', lang);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USER_LANG, lang);
   };
 
-  const currentLanguage = i18n.language === 'en' ? 'English' : 'Czech';
   const currentFlag =
     i18n.language === 'en' ? (
       <US style={{ width: '24px', height: 'auto' }} />
@@ -72,19 +78,20 @@ const Sidebar: FC = () => {
     );
 
   return (
-    <div className="flex h-screen">
+    <div className={`flex h-full sticky`}>
+      {/* Toggle Button */}
+      <BsArrowLeftShort
+        className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white text-3xl rounded-full absolute -right-3 z-50 top-8 border border-black cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600 transition-transform duration-300 
+  ${!open ? 'rotate-180 -right-8 ' : ''}`}
+        onClick={toggleSidebar}
+        aria-label={open ? 'Close sidebar' : 'Open sidebar'}
+      />
+      {/* Sidebar */}
       <div
         className={`bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 border-r shadow-lg h-full p-5 pt-8 ${
-          open ? 'w-72' : 'w-20'
+          open ? 'w-20' : 'hidden'
         } duration-300 flex flex-col relative`}
       >
-        <BsArrowLeftShort
-          className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white text-3xl rounded-full absolute -right-3 top-8 border border-black cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600 transition-transform duration-300 ${
-            !open && 'rotate-180'
-          }`}
-          onClick={toggleSidebar}
-        />
-
         <ul className="flex-grow space-y-2">
           {menuItems.map((item) => (
             <li
@@ -98,6 +105,7 @@ const Sidebar: FC = () => {
               <Link
                 to={`/${item.key}`}
                 className="flex items-center gap-4 w-full h-full"
+                aria-label={t(item.name)}
               >
                 <span
                   className={`text-2xl ${
@@ -108,9 +116,6 @@ const Sidebar: FC = () => {
                 >
                   {item.icon}
                 </span>
-                {open && (
-                  <span className="text-base font-medium">{t(item.name)}</span>
-                )}
               </Link>
             </li>
           ))}
@@ -126,9 +131,6 @@ const Sidebar: FC = () => {
           >
             <div className="flex items-center justify-center gap-2 ">
               {currentFlag}
-              {open && (
-                <span className="text-base font-medium">{currentLanguage}</span>
-              )}
             </div>
           </div>
 
@@ -136,12 +138,9 @@ const Sidebar: FC = () => {
             onClick={handleAuthClick}
             className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200"
           >
-            <span className="text-2xl">{isLoggedIn ? '🔓' : '🔑'}</span>
-            {open && (
-              <span className="text-base font-medium">
-                {isLoggedIn ? `${t('logout')} (${user?.name})` : t('login')}
-              </span>
-            )}
+            <span className="text-2xl">
+              {isLoggedIn ? <BsFillLockFill /> : <BsFillUnlockFill />}
+            </span>
           </div>
         </div>
       </div>

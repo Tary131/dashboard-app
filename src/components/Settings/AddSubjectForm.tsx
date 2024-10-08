@@ -4,65 +4,56 @@ import { useAppDispatch } from '../../redux/hooks';
 import { addSubject } from '../../redux/thunks/subjectsThunks';
 import Button from './Button';
 import Input from './Input';
-import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { FIELD_NAMES } from '../../constants/formConstants';
+import { useTranslation } from 'react-i18next'; // i18n hook
 
 interface FormValues {
   [FIELD_NAMES.NAME]: string;
 }
 
 const AddSubjectForm: FC = () => {
+  const { t } = useTranslation(); // i18n hook
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: {
-      [FIELD_NAMES.NAME]: '',
-    },
+    defaultValues: { [FIELD_NAMES.NAME]: '' },
   });
-
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const subjectData = {
-      name: data[FIELD_NAMES.NAME],
-    };
+    const subjectData = { name: data[FIELD_NAMES.NAME] };
 
     try {
       const resultAction = await dispatch(addSubject(subjectData));
-
       if (addSubject.rejected.match(resultAction)) {
-        console.error('Failed to add subject:', resultAction.payload);
+        console.error(t('error.addSubject'));
       } else {
-        console.log('Subject added successfully:', resultAction.payload);
+        console.log(t('success.addSubject'));
         reset();
       }
     } catch (error) {
-      console.error('Error adding subject:', error);
+      console.error(t('error.addingSubject'));
     }
   };
 
   return (
     <form
-      className="max-w-sm mx-auto space-y-6"
       onSubmit={handleSubmit(onSubmit)}
+      className="max-w-sm mx-auto space-y-6"
     >
       <Input
-        label="Subject Name"
+        label={t('form.subjectName')}
         id="name"
-        error={errors.name?.message}
+        error={errors[FIELD_NAMES.NAME]?.message}
         {...register(FIELD_NAMES.NAME, {
-          required: 'Subject name is required',
+          required: t('form.subjectNameRequired'),
         })}
-        placeholder="Enter subject name"
-        className="block w-full py-2 px-4 mt-1"
+        placeholder={t('form.enterSubjectName')}
       />
-      <Button
-        label="Add Subject"
-        type="submit"
-        className="w-full bg-blue-500"
-      />
+      <Button label={t('form.addSubject')} type="submit" />
     </form>
   );
 };

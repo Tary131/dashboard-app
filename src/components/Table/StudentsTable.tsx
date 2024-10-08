@@ -7,9 +7,9 @@ import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
 
 interface Student {
   name: string;
-  grade: number;
-  subject: string;
-  class: string;
+  grade: number | undefined;
+  subject: string | undefined;
+  class: string | undefined;
   date: string;
 }
 
@@ -97,13 +97,13 @@ const StudentsTable: FC = () => {
                   {student.name}
                 </td>
                 <td className="p-2 text-gray-900 dark:text-gray-200">
-                  {student.grade}
+                  {student.grade ?? 'N/A'}
                 </td>
                 <td className="p-2 text-gray-900 dark:text-gray-200">
-                  {student.subject}
+                  {student.subject ?? 'N/A'}
                 </td>
                 <td className="p-2 text-gray-900 dark:text-gray-200">
-                  {student.class}
+                  {student.class ?? 'N/A'}
                 </td>
                 <td className="p-2 text-gray-900 dark:text-gray-200">
                   {student.date}

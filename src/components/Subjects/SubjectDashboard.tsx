@@ -32,7 +32,7 @@ const SubjectDashboard: FC = () => {
     >
   );
 
-  // Calculate the average grade for each subject
+  // Average grade for each subject
   Object.keys(subjectsSummary).forEach((subject) => {
     const summary = subjectsSummary[subject];
     summary.avgGrade =
