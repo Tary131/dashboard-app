@@ -3,13 +3,13 @@ import TableHeader from './TableHeader';
 import FilterInputs from './FilterInputs';
 import { sortData } from '../../utils/sorting';
 import { filterData } from '../../utils/filtering';
-import useFormattedStudentData from './FormattedStudentData.tsx';
+import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
 
 interface Student {
   name: string;
-  grade: number;
-  subject: string;
-  class: string;
+  grade: number | undefined;
+  subject: string | undefined;
+  class: string | undefined;
   date: string;
 }
 
@@ -25,11 +25,11 @@ const StudentsTable: FC = () => {
   });
 
   const { formattedData, loading, error } = useFormattedStudentData();
-  //to fix
+
   const sortedData = useMemo(
     () =>
       formattedData.length > 0
-        ? sortData(formattedData, sortKey, sortOrder)
+        ? sortData(formattedData, sortKey, sortOrder) //todo
         : [],
     [formattedData, sortKey, sortOrder]
   );
@@ -64,7 +64,7 @@ const StudentsTable: FC = () => {
 
   return (
     <div className="w-full overflow-x-auto">
-      <table className="table-auto w-full bg-white shadow-md rounded-lg">
+      <table className="table-auto w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
         <thead>
           <TableHeader
             sortKey={sortKey}
@@ -80,18 +80,34 @@ const StudentsTable: FC = () => {
         <tbody>
           {filteredData.length === 0 ? (
             <tr>
-              <td colSpan={5} className="text-center p-4">
+              <td
+                colSpan={5}
+                className="text-center p-4 text-gray-700 dark:text-gray-300"
+              >
                 No data available
               </td>
             </tr>
           ) : (
             filteredData.map((student, index) => (
-              <tr key={index} className="border-t hover:bg-gray-100">
-                <td className="p-2">{student.name}</td>
-                <td className="p-2">{student.grade}</td>
-                <td className="p-2">{student.subject}</td>
-                <td className="p-2">{student.class}</td>
-                <td className="p-2">{student.date}</td>
+              <tr
+                key={index}
+                className="border-t dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.name}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.grade ?? 'N/A'}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.subject ?? 'N/A'}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.class ?? 'N/A'}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.date}
+                </td>
               </tr>
             ))
           )}

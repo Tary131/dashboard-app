@@ -2,57 +2,59 @@ import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../redux/hooks';
 import { addSubject } from '../../redux/thunks/subjectsThunks';
+import Button from './Button';
+import Input from './Input';
+import { FIELD_NAMES } from '../../constants/formConstants';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 interface FormValues {
-  name: string;
+  [FIELD_NAMES.NAME]: string;
 }
 
 const AddSubjectForm: FC = () => {
-  const { register, handleSubmit, reset } = useForm<FormValues>({
-    defaultValues: {
-      name: '',
-    },
+  const { t } = useTranslation();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: { [FIELD_NAMES.NAME]: '' },
   });
-
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const subjectData = {
-      name: data.name,
-    };
+    const subjectData = { name: data[FIELD_NAMES.NAME] };
 
     try {
       const resultAction = await dispatch(addSubject(subjectData));
-
       if (addSubject.rejected.match(resultAction)) {
-        console.error('Failed to add subject:', resultAction.payload);
+        toast.error(t('error.addSubject'));
       } else {
-        console.log('Subject added successfully:', resultAction.payload);
+        toast.success(t('success.addSubject'));
         reset();
       }
     } catch (error) {
-      console.error('Error adding subject:', error);
+      toast.error(t('error.addingSubject'));
     }
   };
 
   return (
     <form
-      className="max-w-sm mx-auto space-y-4"
       onSubmit={handleSubmit(onSubmit)}
+      className="max-w-sm mx-auto space-y-6"
     >
-      <input
-        type="text"
-        {...register('name')}
-        placeholder="Subject Name"
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+      <Input
+        label={t('form.subjectName')}
+        id="name"
+        error={errors[FIELD_NAMES.NAME]?.message}
+        {...register(FIELD_NAMES.NAME, {
+          required: t('form.subjectNameRequired'),
+        })}
+        placeholder={t('form.enterSubjectName')}
       />
-
-      <button
-        type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-blue-500 rounded"
-      >
-        Add Subject
-      </button>
+      <Button label={t('form.addSubject')} type="submit" />
     </form>
   );
 };

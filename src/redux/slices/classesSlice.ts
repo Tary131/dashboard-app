@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ClassesState } from '../../types/types';
 import { addClass, fetchClasses } from '../thunks/classesThunks';
+import { RootState } from '../store.ts';
 
 const initialState: ClassesState = {
   classes: {},
@@ -37,5 +38,10 @@ const classesSlice = createSlice({
       });
   },
 });
+// Selectors
+export const selectClasses = (state: RootState) => state.classes.classes;
+export const selectTotalCount = (state: RootState) => state.classes.totalCount;
+export const selectClassesLoading = (state: RootState) => state.classes.loading;
+export const selectClassesError = (state: RootState) => state.classes.error;
 
 export default classesSlice.reducer;

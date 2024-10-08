@@ -6,6 +6,13 @@ import { fetchSubjects } from '../../redux/thunks/subjectsThunks';
 import { Class, Subject } from '../../types/types';
 import { addStudent } from '../../redux/thunks/studentsThunks';
 import { fetchClasses } from '../../redux/thunks/classesThunks';
+import Button from './Button';
+import Input from './Input';
+import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
+import { selectClasses } from '../../redux/slices/classesSlice.ts';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 type SelectOption = {
   value: string;
@@ -13,28 +20,33 @@ type SelectOption = {
 };
 
 interface FormValues {
-  fullName: string;
-  classes: string; // Still keep as string for form submission
-  subjects: string[];
-  avatar: FileList | null;
+  [FIELD_NAMES.FULL_NAME]: string;
+  [FIELD_NAMES.CLASSES]: string;
+  [FIELD_NAMES.SUBJECTS]: string[];
 }
 
 const NewStudentForm: FC = () => {
-  const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
+  const { t } = useTranslation();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
-      fullName: '',
-      classes: '',
-      subjects: [],
-      avatar: null,
+      [FIELD_NAMES.FULL_NAME]: '',
+      [FIELD_NAMES.CLASSES]: '',
+      [FIELD_NAMES.SUBJECTS]: [],
     },
   });
 
-  const [selectedClass, setSelectedClass] = useState<SelectOption | null>(null); // Single class selection
+  const [selectedClass, setSelectedClass] = useState<SelectOption | null>(null);
   const [selectedSubjects, setSelectedSubjects] = useState<SelectOption[]>([]);
 
   const dispatch = useAppDispatch();
-  const { subjects } = useAppSelector((state) => state.subjects);
-  const { classes } = useAppSelector((state) => state.classes);
+  const subjects = useAppSelector(selectSubjects);
+  const classes = useAppSelector(selectClasses);
 
   useEffect(() => {
     dispatch(fetchSubjects());
@@ -58,90 +70,82 @@ const NewStudentForm: FC = () => {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const studentData = {
       name: data.fullName,
-      classIds: selectedClass ? selectedClass.value : '', // Get the selected class ID
+      classIds: selectedClass ? selectedClass.value : '',
       subjectIds: selectedSubjects.map((option) => option.value),
     };
 
-    const file = data.avatar?.[0]; // Handle avatar file
-
     try {
-      if (file) {
-        // Handle avatar upload here if needed
-      }
-
       const resultAction = await dispatch(addStudent(studentData));
-
       if (addStudent.rejected.match(resultAction)) {
-        console.error('Failed to add student:', resultAction.payload);
+        toast.error(t('error.addStudent'));
       } else {
-        console.log('Student added successfully:', resultAction.payload);
+        toast.error(t('success.addStudent'));
         reset();
-        setSelectedClass(null); // Reset selected class
-        setSelectedSubjects([]);
       }
     } catch (error) {
-      console.error('Error adding student:', error);
+      toast.error(t('error.addingStudent'));
     }
   };
 
   return (
     <form
-      className="max-w-sm mx-auto space-y-4"
+      className="max-w-sm mx-auto space-y-6"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <input
-        type="text"
-        {...register('fullName')}
-        placeholder="Full Name"
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+      <Input
+        label={t('form.fullName')}
+        id="fullName"
+        error={errors.fullName?.message}
+        {...register(FIELD_NAMES.FULL_NAME, {
+          required: t('form.fullNameRequired'),
+        })}
+        placeholder={t('form.enterFullName')}
+        className="block w-full py-2 px-4 mt-1"
       />
 
       {/* Classes single-select */}
-      <Select
-        options={classOptions}
-        value={selectedClass}
-        onChange={(selectedOption) => {
-          setSelectedClass(selectedOption as SelectOption); // Set single class
-          setValue('classes', (selectedOption as SelectOption).value); // Set value for form
-        }}
-        placeholder="Select a class..."
-        className="basic-single"
-        classNamePrefix="select"
-      />
+      <div>
+        <Select
+          options={classOptions}
+          value={selectedClass}
+          onChange={(selectedOption) => {
+            setSelectedClass(selectedOption as SelectOption);
+            setValue(
+              FIELD_NAMES.CLASSES,
+              (selectedOption as SelectOption).value
+            );
+          }}
+          placeholder={t('form.selectClass')}
+          className="basic-single"
+          classNamePrefix="select"
+        />
+        {errors[FIELD_NAMES.CLASSES] && (
+          <p className="text-red-600">{t('form.classRequired')}</p>
+        )}
+      </div>
 
       {/* Subjects multi-select */}
-      <Select
-        isMulti
-        options={subjectOptions}
-        value={selectedSubjects}
-        onChange={(selectedOptions) => {
-          setSelectedSubjects(selectedOptions as SelectOption[]);
-          setValue(
-            'subjects',
-            (selectedOptions as SelectOption[]).map((option) => option.value)
-          );
-        }}
-        placeholder="Select subjects..."
-        className="basic-multi-select"
-        classNamePrefix="select"
-      />
-
-      <input
-        type="file"
-        {...register('avatar')}
-        onChange={(e) => {
-          const files = e.target.files;
-          setValue('avatar', files);
-        }}
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-      />
-
-      <button
-        type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-green-500 rounded"
-      >
-        Add Student
-      </button>
+      <div>
+        <Select
+          isMulti
+          options={subjectOptions}
+          value={selectedSubjects}
+          onChange={(selectedOptions) => {
+            setSelectedSubjects(selectedOptions as SelectOption[]);
+            setValue(
+              FIELD_NAMES.SUBJECTS,
+              (selectedOptions as SelectOption[]).map((option) => option.value)
+            );
+          }}
+          placeholder={t('form.selectSubjects')}
+          className="basic-multi-select"
+          classNamePrefix="select"
+        />
+        {errors[FIELD_NAMES.SUBJECTS] && (
+          <p className="text-red-600">{t('form.subjectsRequired')}</p>
+        )}
+      </div>
+      <Button label={t('form.addStudent')} type="submit" />
     </form>
   );
 };

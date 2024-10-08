@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import Select from 'react-select';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -7,6 +7,15 @@ import { fetchStudents } from '../../redux/thunks/studentsThunks';
 import { Subject, Student, Grades } from '../../types/types';
 import { updateStudentWithGrades } from '../../redux/thunks/studentsThunks';
 import { fetchGrades } from '../../redux/thunks/gradesThunks.ts';
+import Button from './Button';
+import Input from './Input';
+import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
+import { selectStudents } from '../../redux/slices/studentsSlice.ts';
+import { selectGrades } from '../../redux/slices/gradesSlice.ts';
+import { customSelectStyles } from '../custom/customSelectStyles.ts';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 type SelectOption = {
   value: string;
@@ -14,34 +23,34 @@ type SelectOption = {
 };
 
 interface FormValues {
-  studentId: string;
-  subject: string;
-  gradeId: string;
-  description: string;
+  [FIELD_NAMES.STUDENT_ID]: string;
+  [FIELD_NAMES.SUBJECT]: string;
+  [FIELD_NAMES.GRADE_ID]: string;
+  [FIELD_NAMES.DESCRIPTION]: string;
 }
 
 const AddGradeForm: FC = () => {
-  const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
+  const { t } = useTranslation();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
-      studentId: '',
-      subject: '',
-      gradeId: '',
-      description: '',
+      [FIELD_NAMES.STUDENT_ID]: '',
+      [FIELD_NAMES.SUBJECT]: '',
+      [FIELD_NAMES.GRADE_ID]: '',
+      [FIELD_NAMES.DESCRIPTION]: '',
     },
   });
 
-  const [selectedStudent, setSelectedStudent] = useState<SelectOption | null>(
-    null
-  );
-  const [selectedSubject, setSelectedSubject] = useState<SelectOption | null>(
-    null
-  );
-  const [selectedGrade, setSelectedGrade] = useState<SelectOption | null>(null);
-
   const dispatch = useAppDispatch();
-  const { subjects } = useAppSelector((state) => state.subjects);
-  const { students } = useAppSelector((state) => state.students);
-  const { grades } = useAppSelector((state) => state.grades);
+  const subjects = useAppSelector(selectSubjects);
+  const students = useAppSelector(selectStudents);
+  const grades = useAppSelector(selectGrades);
 
   useEffect(() => {
     dispatch(fetchSubjects());
@@ -62,6 +71,7 @@ const AddGradeForm: FC = () => {
       value: subject.id,
       label: subject.name,
     }));
+
   const gradeOptions: SelectOption[] =
     grades &&
     Object.values(grades).map((grade: Grades) => ({
@@ -69,95 +79,120 @@ const AddGradeForm: FC = () => {
       label: grade.value,
     }));
 
+  const selectedStudent = watch(FIELD_NAMES.STUDENT_ID);
+  const selectedSubject = watch(FIELD_NAMES.SUBJECT);
+  const selectedGrade = watch(FIELD_NAMES.GRADE_ID);
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const newGrades = [
       {
-        subjectId: data.subject,
-        grade: data.gradeId,
-        description: data.description,
+        subjectId: data[FIELD_NAMES.SUBJECT],
+        grade: data[FIELD_NAMES.GRADE_ID],
+        description: data[FIELD_NAMES.DESCRIPTION],
       },
     ];
 
     try {
       const resultAction = await dispatch(
         updateStudentWithGrades({
-          studentId: data.studentId,
+          studentId: data[FIELD_NAMES.STUDENT_ID],
           newGrades,
         })
       );
 
       if (updateStudentWithGrades.rejected.match(resultAction)) {
-        console.error('Failed to add grade:', resultAction.payload);
+        toast.error(t('error.addGrade'));
       } else {
-        console.log('Grade added successfully:', resultAction.payload);
+        toast.success(t('success.addGrade'));
         reset();
-        setSelectedStudent(null);
-        setSelectedSubject(null);
-        setSelectedGrade(null);
       }
     } catch (error) {
-      console.error('Error adding grade:', error);
+      toast.error(t('error.addingGrade'));
     }
   };
 
   return (
-    <form
-      className="max-w-sm mx-auto space-y-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       {/* Student select */}
-      <Select
-        options={studentOptions}
-        value={selectedStudent}
-        onChange={(selectedOption) => {
-          setSelectedStudent(selectedOption as SelectOption);
-          setValue('studentId', (selectedOption as SelectOption).value); // Set selected student ID
-        }}
-        placeholder="Select student..."
-        className="basic-select"
-        classNamePrefix="select"
-      />
+      <div>
+        <Select
+          options={studentOptions}
+          value={studentOptions.find(
+            (option) => option.value === selectedStudent
+          )}
+          onChange={(selectedOption) => {
+            setValue(
+              FIELD_NAMES.STUDENT_ID,
+              (selectedOption as SelectOption).value
+            );
+          }}
+          placeholder={t('form.selectStudent')}
+          className="basic-select"
+          classNamePrefix="select"
+        />
+        {errors[FIELD_NAMES.STUDENT_ID] && (
+          <p className="text-red-600 text-sm mt-1">
+            {t('form.studentRequired')}
+          </p>
+        )}
+      </div>
 
       {/* Subject select */}
-      <Select
-        options={subjectOptions}
-        value={selectedSubject}
-        onChange={(selectedOption) => {
-          setSelectedSubject(selectedOption as SelectOption);
-          setValue('subject', (selectedOption as SelectOption).value);
-        }}
-        placeholder="Select subject..."
-        className="basic-select"
-        classNamePrefix="select"
-      />
+      <div>
+        <Select
+          options={subjectOptions}
+          value={subjectOptions.find(
+            (option) => option.value === selectedSubject
+          )}
+          onChange={(selectedOption) => {
+            setValue(
+              FIELD_NAMES.SUBJECT,
+              (selectedOption as SelectOption).value
+            );
+          }}
+          placeholder={t('form.selectSubject')}
+          className="basic-select"
+          classNamePrefix="select"
+          styles={customSelectStyles}
+        />
+        {errors[FIELD_NAMES.SUBJECT] && (
+          <p className="text-red-600 text-sm mt-1">
+            {t('form.subjectRequired')}
+          </p>
+        )}
+      </div>
 
-      {/* Grade input */}
-      <Select
-        options={gradeOptions}
-        value={selectedGrade}
-        onChange={(selectedOption) => {
-          setSelectedGrade(selectedOption as SelectOption);
-          setValue('gradeId', (selectedOption as SelectOption).value); // Set selected grade ID
-        }}
-        placeholder="Select grade..."
-        className="basic-select"
-        classNamePrefix="select"
-      />
+      {/* Grade select */}
+      <div>
+        <Select
+          options={gradeOptions}
+          value={gradeOptions.find((option) => option.value === selectedGrade)}
+          onChange={(selectedOption) => {
+            setValue(
+              FIELD_NAMES.GRADE_ID,
+              (selectedOption as SelectOption).value
+            );
+          }}
+          placeholder={t('form.selectGrade')}
+          className="basic-select"
+          classNamePrefix="select"
+        />
+        {errors[FIELD_NAMES.GRADE_ID] && (
+          <p className="text-red-600 text-sm mt-1">{t('form.gradeRequired')}</p>
+        )}
+      </div>
 
       {/* Description input */}
-      <input
-        type="text"
-        {...register('description')}
-        placeholder="Description (optional)"
-        className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-      />
+      <div>
+        <Input
+          label={t('form.description')}
+          id="description"
+          {...register(FIELD_NAMES.DESCRIPTION)}
+          className="block w-full py-2 px-4 mt-1"
+        />
+      </div>
 
-      <button
-        type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-green-500 rounded"
-      >
-        Add Grade
-      </button>
+      <Button label={t('form.addGrade')} type="submit" className="w-full" />
     </form>
   );
 };

@@ -1,67 +1,60 @@
 import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../redux/hooks';
-import { addClass } from '../../redux/thunks/classesThunks.ts';
+import { addClass } from '../../redux/thunks/classesThunks';
+import Button from './Button';
+import Input from './Input';
+import { FIELD_NAMES } from '../../constants/formConstants';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 interface FormValues {
-  name: string;
+  [FIELD_NAMES.NAME]: string;
 }
 
 const AddClassForm: FC = () => {
+  const { t } = useTranslation(); // i18n hook
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: { [FIELD_NAMES.NAME]: '' },
+  });
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const classData = {
-      name: data.name,
-    };
+    const classData = { name: data[FIELD_NAMES.NAME] };
 
     try {
       const resultAction = await dispatch(addClass(classData));
       if (addClass.rejected.match(resultAction)) {
-        console.error('Failed to add class:', resultAction.payload);
+        toast.error(t('error.addClass'));
       } else {
-        console.log('Class added successfully:', resultAction.payload);
+        toast.success(t('success.addClass'));
         reset();
       }
     } catch (error) {
-      console.error('Error adding Class:', error);
+      toast.error(t('error.addingClass'));
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-sm mx-auto space-y-4"
+      className="max-w-sm mx-auto space-y-6"
     >
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Name
-        </label>
-        <input
-          id="name"
-          {...register('name', { required: 'Name is required' })}
-          className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        className="block py-2.5 px-0 w-full text-sm text-white bg-green-500 rounded"
-      >
-        Add Class
-      </button>
+      <Input
+        label={t('form.className')}
+        id="name"
+        error={errors[FIELD_NAMES.NAME]?.message}
+        {...register(FIELD_NAMES.NAME, {
+          required: t('form.classNameRequired'),
+        })}
+        className="block w-full py-2 px-4 mt-1"
+      />
+      <Button label={t('form.addClass')} type="submit" />
     </form>
   );
 };

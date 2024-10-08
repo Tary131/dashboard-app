@@ -54,7 +54,7 @@ export const fetchStudentById = createAsyncThunk(
 export const addStudent = createAsyncThunk(
   'students/addStudent',
   async (
-    studentData: Omit<Student, 'createdAt' | 'updatedAt' | 'id'>, // Omit `createdAt`, `updatedAt`, and `id`
+    studentData: Omit<Student, 'createdAt' | 'updatedAt' | 'id'>,
     { rejectWithValue }
   ) => {
     const { ...data } = studentData;
@@ -67,7 +67,6 @@ export const addStudent = createAsyncThunk(
     };
 
     try {
-      // Generate a new document with an auto-ID in the "students" collection
       const studentRef = doc(collection(db, 'students'));
       await setDoc(studentRef, { ...studentWithTimestamps, id: studentRef.id });
 
