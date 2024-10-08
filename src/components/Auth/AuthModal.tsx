@@ -8,6 +8,7 @@ import {
   selectIsLoggedIn,
 } from '../../redux/slices/auth/authSlice.ts';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 type AuthFormValues = {
   email: string;
@@ -34,11 +35,13 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const authError = useAppSelector(selectAuthError);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
       reset();
       onClose();
+      navigate('/dashboard');
     }
   }, [isLoggedIn, reset, onClose]);
 
