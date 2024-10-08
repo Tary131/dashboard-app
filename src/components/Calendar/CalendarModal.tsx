@@ -8,10 +8,15 @@ interface CalendarModalProps {
     category: string;
     start: string;
     end?: string;
+    color: string;
   }) => void;
   defaultStart: string;
 }
-
+const categoryColors: { [key: string]: string } = {
+  Lesson: '#4CAF50', // Green
+  Test: '#F44336', // Red
+  Meeting: '#2196F3', // Blue
+};
 const CalendarModal: FC<CalendarModalProps> = ({
   onClose,
   onSave,
@@ -27,7 +32,14 @@ const CalendarModal: FC<CalendarModalProps> = ({
       alert('Title is required!');
       return;
     }
-    onSave({ title, category, start: startTime, end: endTime || undefined });
+    const color = categoryColors[category];
+    onSave({
+      title,
+      category,
+      start: startTime,
+      end: endTime || undefined,
+      color,
+    });
     setTitle('');
     setCategory('Lesson');
   };

@@ -66,6 +66,7 @@ const Calendar: FC = () => {
     category: string;
     start: string;
     end?: string;
+    color: string;
   }) => {
     if (!selectedEvent) {
       console.error('Selected event is null. Cannot save event.');
@@ -78,6 +79,7 @@ const Calendar: FC = () => {
         start: eventDetails.start,
         end: eventDetails.end || undefined,
         category: eventDetails.category,
+        color: eventDetails.color,
       };
       dispatch(addCalendarEvent({ userId: user!.id, event: newEvent }));
       setModalVisible(false);
@@ -92,7 +94,10 @@ const Calendar: FC = () => {
         initialView="dayGridMonth"
         selectable={true}
         editable={true}
-        events={events}
+        events={events.map((event) => ({
+          ...event,
+          color: event.color || '#374151', // Use the dynamic color or fallback to a default
+        }))}
         select={handleDateSelect}
         eventClick={handleEventClick}
         headerToolbar={{
@@ -100,7 +105,7 @@ const Calendar: FC = () => {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay',
         }}
-        eventColor="#374151" //todo colors dynamic
+        //todo colors dynamic
         dayMaxEventRows={3}
         fixedWeekCount={false}
         eventTextColor="white"

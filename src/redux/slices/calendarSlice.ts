@@ -16,6 +16,7 @@ interface CalendarEvent {
   start: string;
   end?: string;
   category: string;
+  color: string;
 }
 
 interface CalendarState {
