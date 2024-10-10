@@ -1,13 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-
-interface Student {
-  name: string;
-  grade: number;
-  subject: string;
-  class: string;
-  date: string;
-}
+import { StudentUtility as Student } from '../../types/types.ts';
 
 interface TableHeaderProps {
   sortKey: keyof Student | null;
@@ -23,6 +16,15 @@ const TableHeader: FC<TableHeaderProps> = ({
   toggleSortOrder,
 }) => {
   const { t } = useTranslation();
+
+  const handleHeaderClick = (key: keyof Student) => {
+    if (sortKey === key) {
+      toggleSortOrder();
+    } else {
+      handleSort(key);
+    }
+  };
+
   return (
     <tr>
       {(
@@ -34,16 +36,13 @@ const TableHeader: FC<TableHeaderProps> = ({
         >
           <div
             className="flex items-center gap-2 cursor-pointer group"
-            onClick={() => handleSort(key)}
+            onClick={() => handleHeaderClick(key)} // Use the new function here
           >
             <span>{t(`table.${key}`)}</span>
             {sortKey === key && (
-              <button
-                className="text-sm text-blue-500 dark:text-blue-300"
-                onClick={toggleSortOrder}
-              >
+              <span className="text-sm text-blue-500 dark:text-blue-300">
                 {sortOrder === 'asc' ? '▲' : '▼'}
-              </button>
+              </span>
             )}
             {/* Hover tooltip */}
             <span className="hidden group-hover:inline text-xs text-gray-500 dark:text-gray-400">
