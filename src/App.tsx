@@ -8,11 +8,7 @@ import Calendar from './components/Calendar/Calendar';
 import Settings from './components/Settings/Settings';
 import Header from './components/Header/Header';
 import { useAppSelector, useAppDispatch } from './redux/hooks';
-import {
-  loginUser,
-  selectIsLoggedIn,
-  selectUser,
-} from './redux/slices/auth/authSlice';
+import { selectIsLoggedIn, setUser } from './redux/slices/auth/authSlice';
 import { auth } from './firebase/firebaseConfig';
 import './i18n';
 import {
@@ -24,14 +20,14 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
 import AuthModal from './components/Auth/AuthModal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { User } from 'firebase/auth';
 
 const App: FC = () => {
-  const user = useAppSelector(selectUser);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const isDarkMode = useAppSelector(selectIsDarkMode);
   const dispatch = useAppDispatch();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
@@ -39,21 +35,26 @@ const App: FC = () => {
       dispatch(setDarkMode(true));
     }
 
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
+    const unsubscribe = auth.onAuthStateChanged((_user: User | null) => {
+      setLoading(true);
+      if (_user) {
         dispatch(
-          loginUser.fulfilled({
-            id: user.uid,
-            email: user.email || '',
-            name: user.displayName || '',
+          setUser({
+            id: _user.uid,
+            email: _user.email || '',
+            name: _user.displayName || '',
           })
         );
+      } else {
+        dispatch(setUser(null));
       }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, [dispatch]);
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -67,33 +68,25 @@ const App: FC = () => {
       <div className="flex flex-col h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
         <Header
           isLoggedIn={isLoggedIn}
-          userName={user?.name}
           toggleDarkMode={() => dispatch(toggleDarkMode())}
         />
         <div className="flex flex-grow">
           <Sidebar />
           <main className="flex-1 p-5 min-h-screen bg-white dark:bg-gray-900 transition duration-300">
             <Routes>
-              <Route
-                path="/dashboard"
-                element={<ProtectedRoute element={<Dashboard />} />}
-              />
-              <Route
-                path="/students"
-                element={<ProtectedRoute element={<Students />} />}
-              />
-              <Route
-                path="/subjects"
-                element={<ProtectedRoute element={<Subjects />} />}
-              />
-              <Route
-                path="/calendar"
-                element={<ProtectedRoute element={<Calendar />} />}
-              />
-              <Route
-                path="/settings"
-                element={<ProtectedRoute element={<Settings />} />}
-              />
+              {[
+                { path: '/dashboard', component: <Dashboard /> },
+                { path: '/students', component: <Students /> },
+                { path: '/subjects', component: <Subjects /> },
+                { path: '/calendar', component: <Calendar /> },
+                { path: '/settings', component: <Settings /> },
+              ].map(({ path, component }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={<ProtectedRoute element={component} />}
+                />
+              ))}
             </Routes>
           </main>
         </div>

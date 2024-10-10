@@ -5,21 +5,12 @@ export interface Subject {
   createdAt: string;
   updatedAt?: string;
 }
-export interface Subject {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt?: string;
-}
+// Grade type
 export interface Grades {
   id: string;
   value: number;
 }
-export interface GradesState {
-  grades: { [id: string]: Grades };
-  loading: boolean;
-  error: string | null;
-}
+
 // Class type
 export interface Class {
   id: string;
@@ -27,7 +18,7 @@ export interface Class {
   createdAt: string;
   updatedAt: string;
 }
-
+// Student type
 export interface Student {
   id: string;
   name: string;
@@ -43,7 +34,12 @@ export interface Student {
   createdAt: string;
   updatedAt: string;
 }
-
+// Grades state type
+export interface GradesState {
+  grades: { [id: string]: Grades };
+  loading: boolean;
+  error: string | null;
+}
 // Students state type
 export interface StudentsState {
   students: { [id: string]: Student };

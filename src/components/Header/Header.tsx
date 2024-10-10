@@ -1,17 +1,15 @@
 import React from 'react';
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs';
+import { useAppSelector } from '../../redux/hooks.ts';
+import { selectUser } from '../../redux/slices/auth/authSlice.ts';
 
 interface HeaderProps {
   isLoggedIn: boolean;
-  userName: string | undefined;
   toggleDarkMode: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
-  isLoggedIn,
-  userName,
-  toggleDarkMode,
-}) => {
+const Header: React.FC<HeaderProps> = ({ isLoggedIn, toggleDarkMode }) => {
+  const user = useAppSelector(selectUser);
   return (
     <header className="flex items-center justify-between bg-white dark:bg-gray-900 shadow-md p-4">
       <div className="flex items-center">
@@ -36,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({
 
       <div className="flex items-center">
         {isLoggedIn ? (
-          <span className="ml-3 text-lg dark:text-white">{userName}</span>
+          <span className="ml-3 text-lg dark:text-white">{user?.name}</span>
         ) : (
           <span className="ml-3 text-lg dark:text-white">Guest</span>
         )}
