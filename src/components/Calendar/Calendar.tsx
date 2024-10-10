@@ -105,7 +105,6 @@ const Calendar: FC = () => {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay',
         }}
-        //todo colors dynamic
         dayMaxEventRows={3}
         fixedWeekCount={false}
         eventTextColor="white"
