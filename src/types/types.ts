@@ -1,5 +1,3 @@
-// School Management Types
-
 // Subject type
 export type Subject = {
   id: string;
