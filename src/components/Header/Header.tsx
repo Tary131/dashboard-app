@@ -1,47 +1,42 @@
-// src/components/Header/Header.tsx
-import React, { useState } from 'react';
+import React from 'react';
+import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs';
+import { useAppSelector } from '../../redux/hooks.ts';
+import { selectUser } from '../../redux/selectors';
 
-interface HeaderProps {
+type HeaderProps = {
   isLoggedIn: boolean;
-  userName: string;
-}
+  toggleDarkMode: () => void;
+};
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn, userName }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
+const Header: React.FC<HeaderProps> = ({ isLoggedIn, toggleDarkMode }) => {
+  const user = useAppSelector(selectUser);
   return (
     <header className="flex items-center justify-between bg-white dark:bg-gray-900 shadow-md p-4">
-      {/* Logo on the left */}
       <div className="flex items-center">
-        <img src="" alt="Logo" className="h-8 w-auto" />
         <h1 className="ml-3 text-2xl font-semibold dark:text-white">
           Dashboard
         </h1>
       </div>
 
-      {/* Dark mode toggle */}
       <div className="flex items-center justify-center">
-        <button
+        <div
+          className="relative inline-flex items-center w-14 h-7 rounded-full p-1 cursor-pointer transition-colors duration-300 shadow-lg bg-gray-300 dark:bg-gray-800"
           onClick={toggleDarkMode}
-          className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 p-2 rounded-md focus:outline-none"
+          role="button"
+          aria-pressed="false"
         >
-          {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'}
-        </button>
+          <div className="absolute left-1 top-1 w-5 h-5 rounded-full transition-transform duration-300 bg-white dark:bg-yellow-500 transform dark:translate-x-7 flex items-center justify-center shadow-md">
+            <BsFillSunFill className="text-yellow-400 dark:hidden" />
+            <BsFillMoonFill className="text-gray-700 hidden dark:block" />
+          </div>
+        </div>
       </div>
 
-      {/* User avatar and name */}
       <div className="flex items-center">
         {isLoggedIn ? (
-          <>
-            <img src="" alt="User Avatar" className="h-8 w-8 rounded-full" />
-            <span className="ml-3 text-lg dark:text-white">{userName}</span>
-          </>
+          <span className="ml-3 text-lg dark:text-white">{user?.name}</span>
         ) : (
-          <span className="text-lg dark:text-white">Guest</span>
+          <span className="ml-3 text-lg dark:text-white">Guest</span>
         )}
       </div>
     </header>

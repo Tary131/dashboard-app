@@ -1,69 +1,63 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { selectUser } from '../../redux/selectors';
+import { thunks } from '../../redux/thunks';
+import Input from '../custom/Input.tsx';
+import Button from '../custom/Button.tsx';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
-interface FormValues {
-  name: string;
-  surname: string;
-  subjects: string;
-  avatar: FileList | null;
-}
+type FormValues = {
+  [FIELD_NAMES.NAME]: string;
+};
 
 const TeacherSettingsForm: FC = () => {
-  const { register, handleSubmit, setValue } = useForm<FormValues>({
-    defaultValues: {
-      name: 'John',
-      surname: 'Doe',
-      subjects: 'Math, Science',
-      avatar: null,
-    },
-  });
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
-  // Handle input change
-  const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    setValue('avatar', files);
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>();
 
-  // Handle form submission
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    const file = data.avatar?.[0];
-    if (file) {
-      console.log(file);
+  useEffect(() => {
+    if (user) {
+      reset({
+        [FIELD_NAMES.NAME]: user[FIELD_NAMES.NAME] || '',
+      });
     }
-    alert('Teacher details saved');
+  }, [user, reset]);
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    if (user) {
+      dispatch(thunks.updateUser({ name: data[FIELD_NAMES.NAME] }));
+      toast.success('Success Change');
+    }
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="text"
-        {...register('name')}
-        placeholder="Name"
-        className="w-full p-2 border border-gray-300 rounded"
+    <form
+      className="max-w-md mx-auto space-y-6"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Input
+        label={t('form.name')}
+        id="name"
+        error={errors.name?.message}
+        {...register(FIELD_NAMES.NAME, { required: t('form.name_required') })}
+        placeholder={t('enter_name')}
+        className="block w-full p-2 mt-1"
       />
-      <input
-        type="text"
-        {...register('surname')}
-        placeholder="Surname"
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <textarea
-        {...register('subjects')}
-        placeholder="Subjects"
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="file"
-        {...register('avatar')}
-        onChange={onChangeFile}
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <button
+      <Button
+        label={t('form.save')}
         type="submit"
-        className="w-full p-2 bg-blue-500 text-white rounded"
-      >
-        Save
-      </button>
+        className="w-full bg-blue-500 text-white"
+      />
     </form>
   );
 };

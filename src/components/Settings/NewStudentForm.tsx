@@ -1,77 +1,148 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
+import Select from 'react-select';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { thunks } from '../../redux/thunks';
+import { Class, Subject } from '../../types/types';
+import Button from '../custom/Button.tsx';
+import Input from '../custom/Input.tsx';
+import { selectSubjects, selectClasses } from '../../redux/selectors';
+import { FIELD_NAMES } from '../../constants/formConstants.ts';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { customSelectStyles } from '../custom/customSelectStyles.ts';
+import { selectIsDarkMode } from '../../redux/darkMode/darkModeSlice.ts';
+import { SelectOption } from '../../types/types';
 
-interface FormValues {
-  name: string;
-  surname: string;
-  classes: string;
-  subjects: string;
-  avatar: FileList | null;
-}
+type FormValues = {
+  [FIELD_NAMES.FULL_NAME]: string;
+  [FIELD_NAMES.CLASSES]: string;
+  [FIELD_NAMES.SUBJECTS]: string[];
+};
 
 const NewStudentForm: FC = () => {
-  const { register, handleSubmit, setValue } = useForm<FormValues>({
+  const { t } = useTranslation();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
-      name: '',
-      surname: '',
-      classes: '',
-      subjects: '',
-      avatar: null,
+      [FIELD_NAMES.FULL_NAME]: '',
+      [FIELD_NAMES.CLASSES]: '',
+      [FIELD_NAMES.SUBJECTS]: [],
     },
   });
 
-  // Handle input change
-  const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    setValue('avatar', files);
-  };
+  const [selectedClass, setSelectedClass] = useState<SelectOption | null>(null);
+  const [selectedSubjects, setSelectedSubjects] = useState<SelectOption[]>([]);
 
-  // Handle form submission
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    const file = data.avatar?.[0];
-    if (file) {
-      console.log(file);
+  const dispatch = useAppDispatch();
+  const subjects = useAppSelector(selectSubjects);
+  const classes = useAppSelector(selectClasses);
+  const isDarkMode = useAppSelector(selectIsDarkMode);
+  useEffect(() => {
+    dispatch(thunks.fetchSubjects());
+    dispatch(thunks.fetchClasses());
+  }, [dispatch]);
+
+  const classOptions: SelectOption[] =
+    classes &&
+    Object.values(classes).map((classItem: Class) => ({
+      value: classItem.id,
+      label: classItem.name,
+    }));
+
+  const subjectOptions: SelectOption[] =
+    subjects &&
+    Object.values(subjects).map((subject: Subject) => ({
+      value: subject.id,
+      label: subject.name,
+    }));
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const studentData = {
+      name: data.fullName,
+      classIds: selectedClass ? selectedClass.value : '',
+      subjectIds: selectedSubjects.map((option) => option.value),
+    };
+
+    try {
+      const resultAction = await dispatch(thunks.addStudent(studentData));
+      if (thunks.addStudent.rejected.match(resultAction)) {
+        toast.error(t('error.addStudent'));
+      } else {
+        toast.success(t('success.addStudent'));
+        reset();
+      }
+    } catch (error) {
+      toast.error(t('error.addingStudent'));
     }
-    alert('New student added');
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="text"
-        {...register('name')}
-        placeholder="Name"
-        className="w-full p-2 border border-gray-300 rounded"
+    <form
+      className="max-w-sm mx-auto space-y-6"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Input
+        label={t('form.fullName')}
+        id="fullName"
+        error={errors.fullName?.message}
+        {...register(FIELD_NAMES.FULL_NAME, {
+          required: t('form.fullNameRequired'),
+        })}
+        placeholder={t('form.enterFullName')}
+        className="block w-full py-2 px-4 mt-1"
       />
-      <input
-        type="text"
-        {...register('surname')}
-        placeholder="Surname"
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="text"
-        {...register('classes')}
-        placeholder="Classes"
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <textarea
-        {...register('subjects')}
-        placeholder="Subjects"
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="file"
-        {...register('avatar')}
-        onChange={onChangeFile}
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-      <button
-        type="submit"
-        className="w-full p-2 bg-green-500 text-white rounded"
-      >
-        Add Student
-      </button>
+
+      {/* Classes single-select */}
+      <div>
+        <Select
+          options={classOptions}
+          value={selectedClass}
+          onChange={(selectedOption) => {
+            setSelectedClass(selectedOption as SelectOption);
+            setValue(
+              FIELD_NAMES.CLASSES,
+              (selectedOption as SelectOption).value
+            );
+          }}
+          placeholder={t('form.selectClass')}
+          className="basic-single"
+          classNamePrefix="select"
+          styles={customSelectStyles(isDarkMode)}
+        />
+        {errors[FIELD_NAMES.CLASSES] && (
+          <p className="text-red-600">{t('form.classRequired')}</p>
+        )}
+      </div>
+
+      {/* Subjects multi-select */}
+      <div>
+        <Select
+          isMulti
+          options={subjectOptions}
+          value={selectedSubjects}
+          onChange={(selectedOptions) => {
+            setSelectedSubjects(selectedOptions as SelectOption[]);
+            setValue(
+              FIELD_NAMES.SUBJECTS,
+              (selectedOptions as SelectOption[]).map((option) => option.value)
+            );
+          }}
+          placeholder={t('form.selectSubjects')}
+          className="basic-multi-select"
+          classNamePrefix="select"
+          styles={customSelectStyles(isDarkMode)}
+        />
+        {errors[FIELD_NAMES.SUBJECTS] && (
+          <p className="text-red-600">{t('form.subjectsRequired')}</p>
+        )}
+      </div>
+      <Button label={t('form.addStudent')} type="submit" />
     </form>
   );
 };

@@ -1,10 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './src/**/*.{js,ts,jsx,tsx}', // Adjust this path if necessary
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        josefin: ['"Josefin Sans"', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 };

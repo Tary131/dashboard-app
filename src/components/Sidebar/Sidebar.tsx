@@ -1,95 +1,144 @@
-import { FC, ReactElement, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   BsArrowLeftShort,
   BsFillHouseDoorFill,
-  BsGlobe,
   BsFillPeopleFill,
   BsGearFill,
   BsReverseListColumnsReverse,
   BsCalendar2DayFill,
+  BsFillUnlockFill,
+  BsFillLockFill,
 } from 'react-icons/bs';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { selectIsLoggedIn } from '../../redux/selectors';
+import { thunks } from '../../redux/thunks';
+import { useTranslation } from 'react-i18next';
+import { US, CZ } from 'country-flag-icons/react/3x2';
+import { LOCAL_STORAGE_KEYS } from '../../constants/localStorageConstants';
+import { PageKey } from '../../types/types';
 
-type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
   name: string;
-  icon: ReactElement;
+  icon: React.ReactElement;
   key: PageKey;
 };
 
 const menuItems: MenuItem[] = [
-  { name: 'Dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
-  { name: 'Subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
-  { name: 'Students', icon: <BsFillPeopleFill />, key: 'students' },
-  { name: 'Calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
-  { name: 'Settings', icon: <BsGearFill />, key: 'settings' },
+  { name: 'dashboard', icon: <BsFillHouseDoorFill />, key: 'dashboard' },
+  { name: 'subjects', icon: <BsReverseListColumnsReverse />, key: 'subjects' },
+  { name: 'students', icon: <BsFillPeopleFill />, key: 'students' },
+  { name: 'calendar', icon: <BsCalendar2DayFill />, key: 'calendar' },
+  { name: 'settings', icon: <BsGearFill />, key: 'settings' },
 ];
 
 const Sidebar: FC = () => {
-  const [open, setOpen] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { t, i18n } = useTranslation();
+  const [open, setOpen] = useState(false);
   const location = useLocation();
+  const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(LOCAL_STORAGE_KEYS.SIDEBAR_OPEN);
+    if (savedState !== null) {
+      setOpen(JSON.parse(savedState));
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    setOpen((prevOpen) => {
+      const newState = !prevOpen;
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.SIDEBAR_OPEN,
+        JSON.stringify(newState)
+      );
+      return newState;
+    });
+  };
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) {
+      dispatch(thunks.logoutUser());
+    }
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USER_LANG, lang);
+  };
+
+  const currentFlag =
+    i18n.language === 'en' ? (
+      <US style={{ width: '24px', height: 'auto' }} />
+    ) : (
+      <CZ style={{ width: '24px', height: 'auto' }} />
+    );
 
   return (
-    <div className="flex h-screen">
+    <div className={`flex h-full sticky`}>
+      {/* Toggle Button */}
+      <BsArrowLeftShort
+        className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white text-3xl rounded-full absolute -right-3 z-50 top-8 border border-black cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600 transition-transform duration-300 
+  ${!open ? 'rotate-180 -right-8 ' : ''}`}
+        onClick={toggleSidebar}
+        aria-label={open ? 'Close sidebar' : 'Open sidebar'}
+      />
       {/* Sidebar */}
       <div
-        className={`bg-gradient-to-r from-gray-100 to-white border-r shadow-lg h-full p-5 pt-8 ${open ? 'w-72' : 'w-20'} duration-300 relative flex flex-col`}
+        className={`bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 border-r shadow-lg h-full p-5 pt-8 ${
+          open ? 'w-20' : 'hidden'
+        } duration-300 flex flex-col relative`}
       >
-        {/* Toggle Button */}
-        <BsArrowLeftShort
-          className={`bg-gray-300 text-black text-3xl rounded-full absolute -right-3 top-9 border border-black cursor-pointer hover:bg-gray-400 transition-transform duration-300 ${!open && 'rotate-180'}`}
-          onClick={() => setOpen(!open)}
-        />
-
-        {/* Menu Items */}
         <ul className="flex-grow space-y-2">
           {menuItems.map((item) => (
             <li
               key={item.key}
-              className={`group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative ${location.pathname === `/${item.key}` ? 'bg-gray-300' : ''} ${!open && 'justify-center'}`}
+              className={`group flex items-center gap-4 p-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200 relative ${
+                location.pathname === `/${item.key}`
+                  ? 'bg-gray-300 dark:bg-gray-700'
+                  : ''
+              } ${!open && 'justify-center'}`}
             >
               <Link
                 to={`/${item.key}`}
                 className="flex items-center gap-4 w-full h-full"
+                aria-label={t(item.name)}
               >
                 <span
-                  className={`text-2xl ${location.pathname === `/${item.key}` ? 'text-blue-500' : 'text-gray-600'}`}
+                  className={`text-2xl ${
+                    location.pathname === `/${item.key}`
+                      ? 'text-blue-500 dark:text-indigo-600'
+                      : 'text-gray-600 dark:text-gray-400'
+                  }`}
                 >
                   {item.icon}
                 </span>
-                {open && (
-                  <span className="text-base font-medium">{item.name}</span>
-                )}
               </Link>
             </li>
           ))}
         </ul>
 
-        {/* Bottom Menu Items */}
-        <div className="flex flex-col mt-auto space-y-2">
-          {/* Language Switcher */}
-          <div className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative">
-            <BsGlobe className="text-2xl text-gray-600" />
-            {open && <span className="text-base font-medium">Language</span>}
+        {/* Footer Section */}
+        <div className="mt-auto space-y-2">
+          <div
+            onClick={() =>
+              handleLanguageChange(i18n.language === 'en' ? 'cz' : 'en')
+            }
+            className="group flex items-center justify-center gap-4 p-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200"
+          >
+            <div className="flex items-center justify-center gap-2 ">
+              {currentFlag}
+            </div>
           </div>
 
-          {/* Auth Action */}
           <div
-            className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-200 relative"
-            onClick={() => {
-              if (isLoggedIn) {
-                setIsLoggedIn(false);
-              } else {
-              }
-            }}
+            onClick={handleAuthClick}
+            className="group flex items-center gap-4 p-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors duration-200"
           >
-            <span className="text-2xl">{isLoggedIn ? '🔓' : '🔑'}</span>
-            {open && (
-              <span className="text-base font-medium">
-                {isLoggedIn ? 'Log Out' : 'Log In / Registration'}
-              </span>
-            )}
+            <span className="text-2xl">
+              {isLoggedIn ? <BsFillLockFill /> : <BsFillUnlockFill />}
+            </span>
           </div>
         </div>
       </div>

@@ -1,10 +1,5 @@
-interface Student {
-  name: string;
-  grade: number;
-  subject: string;
-  class: string;
-  date: string;
-}
+import { StudentUtility as Student } from '../types/types.ts';
+
 interface Filters {
   name: string;
   grade: string;

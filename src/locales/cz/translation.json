@@ -1,0 +1,120 @@
+{
+  "logout": "Odhlasit se",
+  "login": "Přihlasit se",
+  "auth": {
+    "register": "Registrovat se",
+    "login": "Přihlásit se",
+    "email": "E-mail",
+    "password": "Heslo",
+    "confirmPassword": "Potvrďte heslo",
+    "name": "Jméno",
+    "passwordMismatch": "Hesla se neshodují",
+    "required": {
+      "email": "E-mail je povinný",
+      "password": "Heslo je povinné",
+      "confirmPassword": "Potvrďte své heslo",
+      "name": "Jméno je povinné"
+    },
+    "authError": "Chyba při ověřování",
+    "toggle": {
+      "toLogin": "Máte účet? Přihlaste se",
+      "toRegister": "Potřebujete účet? Registrovat"
+    },
+    "passwordMismatch": "Hesla se neshodují. Zkuste to prosím znovu.",
+    "registerSuccess": "Registrace byla úspěšná! Vítejte!",
+    "loginSuccess": "Přihlášení bylo úspěšné! Vítejte zpět!"
+  },
+  "dashboard": {
+    "avg-grade-week": "Průměrné známky za týden",
+    "date": "Dnešní datum",
+    "total-class-count": "Celkový počet tříd",
+    "total-student-count": "Celkový počet studentů",
+    "todo-list": "Seznam úkolů",
+    "add-new-todo": "Přidejte nový úkol...",
+    "add": "Přidat"
+  },
+  "students": {
+    "in-class": "Žáci ve třídě",
+    "statistics": "Statistika",
+    "best-student": "Nejlepší student",
+    "worst-student": "Nejhorší student",
+    "students-list": "Seznam studentů",
+    "n-a": "N/A"
+  },
+  "form": {
+    "name": "Jméno",
+    "name_required": "Jméno je povinné",
+    "enter_name": "Zadejte své jméno",
+    "save": "Uložit",
+    "update_teacher_details": "Aktualizovat údaje učitele",
+    "create_new_student": "Vytvořit nového studenta",
+    "create_new_subject": "Vytvořit nový předmět",
+    "create_new_class": "Vytvořit novou třídu",
+    "add_grade": "Přidat známku",
+    "className": "Název třídy",
+    "classNameRequired": "Název třídy je povinný",
+    "addClass": "Přidat třídu",
+    "subjectName": "Název předmětu",
+    "subjectNameRequired": "Název předmětu je povinný",
+    "enterSubjectName": "Zadejte název předmětu",
+    "addSubject": "Přidat předmět",
+    "fullName": "Celé jméno",
+    "fullNameRequired": "Celé jméno je povinné",
+    "enterFullName": "Zadejte celé jméno",
+    "selectClass": "Vyberte třídu",
+    "classRequired": "Třída je povinná",
+    "selectSubjects": "Vyberte předměty",
+    "subjectsRequired": "Předměty jsou povinné",
+    "addStudent": "Přidat studenta",
+    "addGrade": "Přidat známku",
+    "selectStudent": "Vyberte studenta",
+    "studentRequired": "Student je povinný",
+    "selectSubject": "Vyberte předmět",
+    "subjectRequired": "Předmět je povinný",
+    "selectGrade": "Vyberte známku",
+    "gradeRequired": "Známka je povinná",
+    "description": "Popis",
+    "addingGrade": "Přidávání známky",
+    "enterGradeDescription": "Zadelte popis",
+    "enterClass": "Zadelte třídu"
+  },
+  "calendar": {
+    "addEvent": "Přidat událost",
+    "enterEvent": "Zadat událost",
+    "category": "Kategorie:",
+    "startTime": "Čas začátku:",
+    "endTime": "Čas konce:",
+    "save": "Uložit",
+    "cancel": "Zrušit"
+  },
+
+  "success": {
+    "addClass": "Třída úspěšně přidána!",
+    "addSubject": "Předmět úspěšně přidán!",
+    "addStudent": "Student úspěšně přidán!",
+    "addGrade": "Známka úspěšně přidána!"
+  },
+  "error": {
+    "addClass": "Nepodařilo se přidat třídu",
+    "addSubject": "Nepodařilo se přidat předmět",
+    "addStudent": "Nepodařilo se přidat studenta",
+    "addGrade": "Nepodařilo se přidat známku",
+    "addingClass": "Chyba při přidávání třídy",
+    "addingSubject": "Chyba při přidávání předmětu",
+    "addingStudent": "Chyba při přidávání studenta",
+    "addingGrade": "Chyba při přidávání známky"
+  },
+  "table": {
+    "name": "Jméno",
+    "grade": "Známka",
+    "subject": "Předmět",
+    "class": "Třída",
+    "date": "Datum",
+    "clickToSort": "Seřazení",
+    "filterByName": "Filtrovat podle jména",
+    "filterByGrade": "Filtrovat podle známky",
+    "filterBySubject": "Filtrovat podle předmětu",
+    "filterByClass": "Filtrovat podle třídy",
+    "filterByDate": "Filtrovat podle data"
+  }
+}

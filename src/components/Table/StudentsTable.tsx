@@ -1,55 +1,10 @@
 import { useState, useMemo, FC, ChangeEvent } from 'react';
 import TableHeader from './TableHeader';
 import FilterInputs from './FilterInputs';
-import { sortData } from '../../utils/sorting.ts';
+import { sortData } from '../../utils/sorting';
 import { filterData } from '../../utils/filtering';
-
-interface Student {
-  name: string;
-  grade: number;
-  subject: string;
-  class: string;
-  date: string;
-}
-
-// Sample data
-const sampleData: Student[] = [
-  {
-    name: 'John Doe',
-    grade: 90,
-    subject: 'Math',
-    class: 'A1',
-    date: '2023-09-10',
-  },
-  {
-    name: 'Jane Smith',
-    grade: 85,
-    subject: 'Science',
-    class: 'B2',
-    date: '2023-09-11',
-  },
-  {
-    name: 'Sam Johnson',
-    grade: 78,
-    subject: 'History',
-    class: 'A1',
-    date: '2023-09-12',
-  },
-  {
-    name: 'Lisa Brown',
-    grade: 92,
-    subject: 'English',
-    class: 'C1',
-    date: '2023-09-13',
-  },
-  {
-    name: 'Tom Hanks',
-    grade: 88,
-    subject: 'Math',
-    class: 'B2',
-    date: '2023-09-14',
-  },
-];
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
+import { StudentUtility as Student } from '../../types/types';
 
 const StudentsTable: FC = () => {
   const [sortKey, setSortKey] = useState<keyof Student | null>(null);
@@ -62,29 +17,29 @@ const StudentsTable: FC = () => {
     date: '',
   });
 
-  // Handle sorting
+  const { formattedData, loading, error } = formattedStudentData();
+
   const sortedData = useMemo(
-    () => sortData(sampleData, sortKey, sortOrder),
-    [sortKey, sortOrder]
+    () =>
+      formattedData.length > 0
+        ? sortData(formattedData, sortKey, sortOrder)
+        : [],
+    [formattedData, sortKey, sortOrder]
   );
 
-  // Handle filtering
   const filteredData = useMemo(
-    () => filterData(sortedData, filters),
+    () => (sortedData.length > 0 ? filterData(sortedData, filters) : []),
     [sortedData, filters]
   );
 
-  // Handle sorting when a column header is clicked
   const handleSort = (key: keyof Student) => {
     setSortKey(key);
   };
 
-  // Handle sort direction toggle
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  // Handle filter input change
   const handleFilterChange = (
     e: ChangeEvent<HTMLInputElement>,
     key: keyof Student
@@ -92,9 +47,17 @@ const StudentsTable: FC = () => {
     setFilters({ ...filters, [key]: e.target.value });
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="w-full overflow-x-auto">
-      <table className="table-auto w-full bg-white shadow-md rounded-lg">
+      <table className="table-auto w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
         <thead>
           <TableHeader
             sortKey={sortKey}
@@ -108,15 +71,39 @@ const StudentsTable: FC = () => {
           />
         </thead>
         <tbody>
-          {filteredData.map((student, index) => (
-            <tr key={index} className="border-t hover:bg-gray-100">
-              <td className="p-2">{student.name}</td>
-              <td className="p-2">{student.grade}</td>
-              <td className="p-2">{student.subject}</td>
-              <td className="p-2">{student.class}</td>
-              <td className="p-2">{student.date}</td>
+          {filteredData.length === 0 ? (
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center p-4 text-gray-700 dark:text-gray-300"
+              >
+                No data available
+              </td>
             </tr>
-          ))}
+          ) : (
+            filteredData.map((student, index) => (
+              <tr
+                key={index}
+                className="border-t dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.name}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.grade ?? 'N/A'}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.subject ?? 'N/A'}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.class ?? 'N/A'}
+                </td>
+                <td className="p-2 text-gray-900 dark:text-gray-200">
+                  {student.date}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

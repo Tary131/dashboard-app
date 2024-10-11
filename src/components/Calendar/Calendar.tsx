@@ -1,27 +1,47 @@
-import { useState, useEffect, FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core';
-import CalendarModal from './CalendarModal.tsx';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  fetchCalendarEvents,
+  addCalendarEvent,
+  deleteCalendarEvent,
+} from '../../redux/calendar/thunks/calendarThunks.ts';
+import CalendarModal from './CalendarModal';
+import {
+  selectCalendarEvents,
+  selectCalendarLoading,
+  selectCalendarError,
+  selectIsLoggedIn,
+  selectUser,
+} from '../../redux/selectors';
+import { useTranslation } from 'react-i18next';
+import enLocale from '@fullcalendar/core/locales/en-gb';
+import csLocale from '@fullcalendar/core/locales/cs';
+import { toast } from 'react-toastify';
+import { EventDetails } from '../../types/types';
 
 const Calendar: FC = () => {
-  const [events, setEvents] = useState<EventInput[]>([]);
+  const dispatch = useAppDispatch();
+  const { i18n } = useTranslation();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const user = useAppSelector(selectUser);
+  const events = useAppSelector(selectCalendarEvents);
+  const loading = useAppSelector(selectCalendarLoading);
+  const error = useAppSelector(selectCalendarError);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<EventInput | null>(null);
   const [defaultStartTime, setDefaultStartTime] = useState('');
 
   useEffect(() => {
-    const storedEvents = localStorage.getItem('events');
-    if (storedEvents) {
-      setEvents(JSON.parse(storedEvents));
+    if (isLoggedIn && user?.id) {
+      dispatch(fetchCalendarEvents(user.id));
     }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(events));
-  }, [events]);
+  }, [isLoggedIn, user, dispatch]);
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     const start = selectInfo.startStr;
@@ -40,51 +60,43 @@ const Calendar: FC = () => {
         `Do you want to delete the event '${clickInfo.event.title}'?`
       )
     ) {
-      setEvents(events.filter((event) => event.id !== clickInfo.event.id));
+      dispatch(
+        deleteCalendarEvent({ userId: user!.id, id: clickInfo.event.id! })
+      );
     }
   };
 
-  const handleSaveEvent = (eventDetails: {
-    title: string;
-    category: string;
-    start: string;
-    end?: string;
-  }) => {
-    if (selectedEvent) {
+  const handleSaveEvent = (eventDetails: EventDetails) => {
+    if (!selectedEvent) {
+      toast.error('Selected event is null. Cannot save event.');
+      return;
+    }
+    {
       const newEvent = {
         ...selectedEvent,
         title: eventDetails.title,
         start: eventDetails.start,
         end: eventDetails.end || undefined,
-        color: getCategoryColor(eventDetails.category),
+        category: eventDetails.category,
+        color: eventDetails.color,
       };
-      setEvents([...events, newEvent]);
+      dispatch(addCalendarEvent({ userId: user!.id, event: newEvent }));
       setModalVisible(false);
       setSelectedEvent(null);
     }
   };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Lesson':
-        return '#FF5733'; // Red
-      case 'Test':
-        return '#33FF57'; // Green
-      case 'Meeting':
-        return '#3357FF'; // Blue
-      default:
-        return '#999999'; // Default Grey
-    }
-  };
-
+  const currentLocale = i18n.language === 'en' ? enLocale : csLocale;
   return (
-    <>
+    <div className={'ml-4'}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         selectable={true}
         editable={true}
-        events={events}
+        events={events.map((event) => ({
+          ...event,
+          color: event.color || '#374151',
+        }))}
         select={handleDateSelect}
         eventClick={handleEventClick}
         headerToolbar={{
@@ -92,10 +104,10 @@ const Calendar: FC = () => {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay',
         }}
-        eventColor="#374151"
         dayMaxEventRows={3}
         fixedWeekCount={false}
         eventTextColor="white"
+        locale={currentLocale}
       />
       {modalVisible && (
         <CalendarModal
@@ -104,7 +116,9 @@ const Calendar: FC = () => {
           defaultStart={defaultStartTime}
         />
       )}
-    </>
+      {loading && <p>Loading events...</p>}
+      {error && <p>Error loading events: {error}</p>}
+    </div>
   );
 };
 
