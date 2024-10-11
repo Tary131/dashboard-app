@@ -1,21 +1,14 @@
 import { FC, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Filters } from '../../types/types';
 
-interface Filters {
-  name: string;
-  grade: string;
-  subject: string;
-  class: string;
-  date: string;
-}
-
-interface FilterInputsProps {
+type FilterInputsProps = {
   filters: Filters;
   handleFilterChange: (
     e: ChangeEvent<HTMLInputElement>,
     key: keyof Filters
   ) => void;
-}
+};
 
 const FilterInputs: FC<FilterInputsProps> = ({
   filters,

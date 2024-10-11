@@ -7,20 +7,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
 import { getClassStudentCounts } from './getClassStudentCounts.tsx';
-
-const COLORS = [
-  '#8e44ad',
-  '#16a085',
-  '#f1c40f',
-  '#a93226',
-  '#2471a3',
-  '#3357FF',
-];
+import { COLORS } from '../../constants/pieChartColors.ts';
 
 const GradePieChart: React.FC = () => {
-  const { formattedData, loading, error } = useFormattedStudentData();
+  const { formattedData, loading, error } = formattedStudentData();
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 

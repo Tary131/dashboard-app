@@ -8,15 +8,11 @@ import {
   CartesianGrid,
   Legend,
 } from 'recharts';
+import { WeeklyChartData } from '../../types/types';
 
-interface WeeklyChartData {
-  week: string;
-  avgGrade: number;
-}
-
-interface AverageGradesChartProps {
+type AverageGradesChartProps = {
   weeklyData: WeeklyChartData[];
-}
+};
 
 const AverageGradesChart: FC<AverageGradesChartProps> = ({ weeklyData }) => (
   <LineChart

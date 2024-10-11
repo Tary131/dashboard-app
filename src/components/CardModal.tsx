@@ -1,9 +1,9 @@
 import { FC, MouseEventHandler, ReactNode } from 'react';
 
-interface CardModalProps {
+type CardModalProps = {
   onClose: () => void;
   children: ReactNode;
-}
+};
 
 const CardModal: FC<CardModalProps> = ({ onClose, children }) => {
   const stopPropagation: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -19,7 +19,7 @@ const CardModal: FC<CardModalProps> = ({ onClose, children }) => {
         className="bg-white dark:bg-gray-800 p-4 rounded-lg w-1/3 text-gray-900 dark:text-gray-100"
         onClick={stopPropagation}
       >
-        {children} {/* Specific modal content */}
+        {children}
       </div>
     </div>
   );

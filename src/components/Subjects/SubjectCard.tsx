@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import Card from '../Card';
 
-interface SubjectCardProps {
+type SubjectCardProps = {
   subject: string;
   students: number;
   avgGrade: number;
-}
+};
 
 const SubjectCard: FC<SubjectCardProps> = ({ subject, students, avgGrade }) => {
   return (

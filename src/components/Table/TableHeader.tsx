@@ -2,12 +2,12 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StudentUtility as Student } from '../../types/types.ts';
 
-interface TableHeaderProps {
+type TableHeaderProps = {
   sortKey: keyof Student | null;
   sortOrder: 'asc' | 'desc';
   handleSort: (key: keyof Student) => void;
   toggleSortOrder: () => void;
-}
+};
 
 const TableHeader: FC<TableHeaderProps> = ({
   sortKey,

@@ -11,15 +11,13 @@ import {
   BsFillLockFill,
 } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  logoutUser,
-  selectIsLoggedIn,
-} from '../../redux/slices/auth/authSlice';
+import { selectIsLoggedIn } from '../../redux/selectors';
+import { thunks } from '../../redux/thunks';
 import { useTranslation } from 'react-i18next';
 import { US, CZ } from 'country-flag-icons/react/3x2';
 import { LOCAL_STORAGE_KEYS } from '../../constants/localStorageConstants';
+import { PageKey } from '../../types/types';
 
-type PageKey = 'dashboard' | 'subjects' | 'students' | 'calendar' | 'settings';
 type MenuItem = {
   name: string;
   icon: React.ReactElement;
@@ -61,7 +59,7 @@ const Sidebar: FC = () => {
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
-      dispatch(logoutUser());
+      dispatch(thunks.logoutUser());
     }
   };
 
@@ -110,7 +108,7 @@ const Sidebar: FC = () => {
                 <span
                   className={`text-2xl ${
                     location.pathname === `/${item.key}`
-                      ? 'text-blue-500 dark:text-blue-300'
+                      ? 'text-blue-500 dark:text-indigo-600'
                       : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >

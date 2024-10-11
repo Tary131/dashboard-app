@@ -1,16 +1,16 @@
 import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../redux/hooks';
-import { addClass } from '../../redux/thunks/classesThunks';
-import Button from './Button';
-import Input from './Input';
+import { addClass } from '../../redux/classes/thunks/classesThunks.ts';
+import Button from '../custom/Button.tsx';
+import Input from '../custom/Input.tsx';
 import { FIELD_NAMES } from '../../constants/formConstants';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
-interface FormValues {
+type FormValues = {
   [FIELD_NAMES.NAME]: string;
-}
+};
 
 const AddClassForm: FC = () => {
   const { t } = useTranslation(); // i18n hook
@@ -53,6 +53,7 @@ const AddClassForm: FC = () => {
           required: t('form.classNameRequired'),
         })}
         className="block w-full py-2 px-4 mt-1"
+        placeholder={t('form.enterClass')}
       />
       <Button label={t('form.addClass')} type="submit" />
     </form>

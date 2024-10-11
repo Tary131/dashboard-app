@@ -11,7 +11,7 @@ const Settings: FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="grid gap-4 p-5 grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
+    <div className="grid gap-4 p-5 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
       <Card
         title={t('form.update_teacher_details')}
         content={<TeacherSettingsForm />}

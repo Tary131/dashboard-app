@@ -1,4 +1,4 @@
-import { Student } from '../../hooks/FormattedStudentData.ts';
+import { StudentUtility as Student } from '../../types/types';
 
 export const getClassStudentCounts = (students: Student[]) => {
   const classStudentCount = students.reduce<{ [key: string]: Set<string> }>(

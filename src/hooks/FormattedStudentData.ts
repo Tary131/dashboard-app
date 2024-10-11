@@ -1,23 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks.ts';
-import { fetchSubjects } from '../redux/thunks/subjectsThunks.ts';
-import { fetchGrades } from '../redux/thunks/gradesThunks.ts';
-import { fetchStudents } from '../redux/thunks/studentsThunks.ts';
-import { fetchClasses } from '../redux/thunks/classesThunks.ts';
-import { selectClasses } from '../redux/slices/classesSlice.ts';
-import { selectGrades } from '../redux/slices/gradesSlice.ts';
-import { selectStudents } from '../redux/slices/studentsSlice.ts';
-import { selectSubjects } from '../redux/slices/subjectsSlice.ts';
+import {
+  selectClasses,
+  selectGrades,
+  selectStudents,
+  selectSubjects,
+} from '../redux/selectors';
+import { StudentUtility as Student } from '../types/types.ts';
+import { thunks } from '../redux/thunks';
 
-export interface Student {
-  name: string;
-  grade: number | undefined;
-  subject: string | undefined;
-  class: string | undefined;
-  date: string;
-}
-
-const useFormattedStudentData = () => {
+const formattedStudentData = () => {
   const dispatch = useAppDispatch();
   const subjects = useAppSelector(selectSubjects);
   const students = useAppSelector(selectStudents);
@@ -34,10 +26,10 @@ const useFormattedStudentData = () => {
       setError(null);
       try {
         await Promise.all([
-          dispatch(fetchSubjects()),
-          dispatch(fetchStudents()),
-          dispatch(fetchGrades()),
-          dispatch(fetchClasses()),
+          dispatch(thunks.fetchSubjects()),
+          dispatch(thunks.fetchStudents()),
+          dispatch(thunks.fetchGrades()),
+          dispatch(thunks.fetchClasses()),
         ]);
       } catch (err) {
         setError('Failed to fetch data');
@@ -54,9 +46,9 @@ const useFormattedStudentData = () => {
       (student) =>
         student.subjectGrades?.map((subjectGrade) => ({
           name: student.name,
-          grade: getGradeValue(subjectGrade.grade),
-          subject: getSubjectValue(subjectGrade.subjectId),
-          class: getClassValue(student.classIds),
+          grade: getGradeValue(subjectGrade.grade) ?? 0,
+          subject: getSubjectValue(subjectGrade.subjectId) ?? 'Unknown Subject',
+          class: getClassValue(student.classIds) ?? 'No Class',
           date: formatToYYYYMMDD(
             subjectGrade.createdAt || 'Date not available'
           ),
@@ -98,4 +90,4 @@ const useFormattedStudentData = () => {
   return { formattedData, loading, error };
 };
 
-export default useFormattedStudentData;
+export default formattedStudentData;

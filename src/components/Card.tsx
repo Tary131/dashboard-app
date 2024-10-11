@@ -1,10 +1,10 @@
 import { ReactNode, FC } from 'react';
 
-interface CardProps {
+type CardProps = {
   title: string;
   content: ReactNode;
   className?: string;
-}
+};
 
 const Card: FC<CardProps> = ({ title, content, className = '' }) => {
   return (

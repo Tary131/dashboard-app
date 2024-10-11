@@ -1,11 +1,11 @@
 import { FC, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchClasses } from '../../redux/thunks/classesThunks.ts';
+import { fetchClasses } from '../../redux/classes/thunks/classesThunks.ts';
 import {
   selectClassesError,
   selectClassesLoading,
   selectTotalCount,
-} from '../../redux/slices/classesSlice.ts';
+} from '../../redux/selectors';
 
 const ClassCountDisplay: FC = () => {
   const dispatch = useAppDispatch();

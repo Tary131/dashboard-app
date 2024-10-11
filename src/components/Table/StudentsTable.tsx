@@ -3,15 +3,8 @@ import TableHeader from './TableHeader';
 import FilterInputs from './FilterInputs';
 import { sortData } from '../../utils/sorting';
 import { filterData } from '../../utils/filtering';
-import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
-
-interface Student {
-  name: string;
-  grade: number | undefined;
-  subject: string | undefined;
-  class: string | undefined;
-  date: string;
-}
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
+import { StudentUtility as Student } from '../../types/types';
 
 const StudentsTable: FC = () => {
   const [sortKey, setSortKey] = useState<keyof Student | null>(null);
@@ -24,12 +17,12 @@ const StudentsTable: FC = () => {
     date: '',
   });
 
-  const { formattedData, loading, error } = useFormattedStudentData();
+  const { formattedData, loading, error } = formattedStudentData();
 
   const sortedData = useMemo(
     () =>
       formattedData.length > 0
-        ? sortData(formattedData, sortKey, sortOrder) //todo
+        ? sortData(formattedData, sortKey, sortOrder)
         : [],
     [formattedData, sortKey, sortOrder]
   );

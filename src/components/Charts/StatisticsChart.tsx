@@ -8,28 +8,16 @@ import {
   CartesianGrid,
   Cell,
 } from 'recharts';
-import { GradeCounts } from './StudentStatistics.tsx';
+import { GradeCounts } from '../../types/types';
+import { COLORS } from '../../constants/statisticsChartColors.ts';
 
-interface StatisticsChartProps {
+type StatisticsChartProps = {
   gradeCounts: GradeCounts;
-}
+};
 
 const getColor = (value: number): string => {
-  const COLORS = [
-    '#ff4d4d',
-    '#ff6f61',
-    '#ff8c42',
-    '#ffb74d',
-    '#ffee58',
-    '#dce775',
-    '#cddc39',
-    '#8bc34a',
-    '#7cb342',
-    '#388e3c',
-  ];
-
   // Choose color based on the range of student count
-  const index = Math.min(Math.floor(value / 1), COLORS.length - 1);
+  const index = Math.min(Math.floor(value), COLORS.length - 1);
   return COLORS[index];
 };
 

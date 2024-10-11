@@ -1,22 +1,11 @@
 import { FC } from 'react';
-import Card from '../Card.tsx';
-import TodoList from './TodoList.tsx';
-import StudentCountDisplay from '../Charts/StudentCountDisplay.tsx';
-import ClassCountDisplay from '../Charts/ClassCountDisplay.tsx';
-import AverageGradesByTime from '../Charts/AverageGradesByTime.tsx';
+import Card from '../Card';
+import TodoList from './TodoList';
+import StudentCountDisplay from '../Charts/StudentCountDisplay';
+import ClassCountDisplay from '../Charts/ClassCountDisplay';
+import AverageGradesByTime from '../Charts/AverageGradesByTime';
 import { useTranslation } from 'react-i18next';
-
-// Function to get the formatted date
-const getFormattedDate = () => {
-  const today = new Date();
-  const day = String(today.getDate()).padStart(2, '0');
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const year = today.getFullYear();
-
-  return (
-    <p className="text-center text-3xl font-bold mt-9 text-cyan-700">{`${day}.${month}.${year}`}</p>
-  );
-};
+import { getFormattedDate } from '../../helpers/getFormattedDate';
 
 const Dashboard: FC = () => {
   const { t } = useTranslation();
@@ -46,7 +35,7 @@ const Dashboard: FC = () => {
       <Card
         title={t('dashboard.todo-list')}
         content={<TodoList />}
-        className="col-span-1 md:col-span-2 lg:col-span-4 row-span-1 md:row-span-2"
+        className="col-span-1 md:col-span-2 lg:col-span-3 row-span-1 md:row-span-2 sm:col-span-2"
       />
     </div>
   );

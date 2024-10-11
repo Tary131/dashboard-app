@@ -1,15 +1,17 @@
 import { FC, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectUser, updateUser } from '../../redux/slices/auth/authSlice';
-import Input from './Input';
-import Button from './Button';
+import { selectUser } from '../../redux/selectors';
+import { thunks } from '../../redux/thunks';
+import Input from '../custom/Input.tsx';
+import Button from '../custom/Button.tsx';
 import { FIELD_NAMES } from '../../constants/formConstants.ts';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
-interface FormValues {
+type FormValues = {
   [FIELD_NAMES.NAME]: string;
-}
+};
 
 const TeacherSettingsForm: FC = () => {
   const { t } = useTranslation();
@@ -33,7 +35,8 @@ const TeacherSettingsForm: FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     if (user) {
-      dispatch(updateUser({ name: data[FIELD_NAMES.NAME] }));
+      dispatch(thunks.updateUser({ name: data[FIELD_NAMES.NAME] }));
+      toast.success('Success Change');
     }
   };
 

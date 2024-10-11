@@ -9,25 +9,30 @@ import {
   fetchCalendarEvents,
   addCalendarEvent,
   deleteCalendarEvent,
-} from '../../redux/slices/calendarSlice';
+} from '../../redux/calendar/thunks/calendarThunks.ts';
 import CalendarModal from './CalendarModal';
-import {
-  selectIsLoggedIn,
-  selectUser,
-} from '../../redux/slices/auth/authSlice.ts';
 import {
   selectCalendarEvents,
   selectCalendarLoading,
   selectCalendarError,
-} from '../../redux/slices/calendarSlice.ts';
+  selectIsLoggedIn,
+  selectUser,
+} from '../../redux/selectors';
+import { useTranslation } from 'react-i18next';
+import enLocale from '@fullcalendar/core/locales/en-gb';
+import csLocale from '@fullcalendar/core/locales/cs';
+import { toast } from 'react-toastify';
+import { EventDetails } from '../../types/types';
 
 const Calendar: FC = () => {
   const dispatch = useAppDispatch();
+  const { i18n } = useTranslation();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const user = useAppSelector(selectUser);
   const events = useAppSelector(selectCalendarEvents);
   const loading = useAppSelector(selectCalendarLoading);
   const error = useAppSelector(selectCalendarError);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<EventInput | null>(null);
   const [defaultStartTime, setDefaultStartTime] = useState('');
@@ -61,15 +66,9 @@ const Calendar: FC = () => {
     }
   };
 
-  const handleSaveEvent = (eventDetails: {
-    title: string;
-    category: string;
-    start: string;
-    end?: string;
-    color: string;
-  }) => {
+  const handleSaveEvent = (eventDetails: EventDetails) => {
     if (!selectedEvent) {
-      console.error('Selected event is null. Cannot save event.');
+      toast.error('Selected event is null. Cannot save event.');
       return;
     }
     {
@@ -86,9 +85,9 @@ const Calendar: FC = () => {
       setSelectedEvent(null);
     }
   };
-
+  const currentLocale = i18n.language === 'en' ? enLocale : csLocale;
   return (
-    <>
+    <div className={'ml-4'}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -96,7 +95,7 @@ const Calendar: FC = () => {
         editable={true}
         events={events.map((event) => ({
           ...event,
-          color: event.color || '#374151', // Use the dynamic color or fallback to a default
+          color: event.color || '#374151',
         }))}
         select={handleDateSelect}
         eventClick={handleEventClick}
@@ -108,6 +107,7 @@ const Calendar: FC = () => {
         dayMaxEventRows={3}
         fixedWeekCount={false}
         eventTextColor="white"
+        locale={currentLocale}
       />
       {modalVisible && (
         <CalendarModal
@@ -118,7 +118,7 @@ const Calendar: FC = () => {
       )}
       {loading && <p>Loading events...</p>}
       {error && <p>Error loading events: {error}</p>}
-    </>
+    </div>
   );
 };
 

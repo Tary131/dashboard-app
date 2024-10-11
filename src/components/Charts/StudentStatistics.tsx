@@ -1,32 +1,23 @@
 import { FC } from 'react';
-import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
 import StatisticsChart from './StatisticsChart.tsx';
-import { Student } from '../../hooks/FormattedStudentData.ts';
-export interface GradeCounts {
-  [key: number]: number;
-  1: number;
-  2: number;
-  3: number;
-  4: number;
-  5: number;
-}
+import { StudentUtility as Student } from '../../types/types';
+import { COUNTS } from '../../constants/gradeCounts.ts';
 const StudentStatistics: FC = () => {
-  const { formattedData, loading, error } = useFormattedStudentData();
+  const { formattedData, loading, error } = formattedStudentData();
 
   const countGrades = (data: Student[]) => {
-    const counts: GradeCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-
     data.forEach((student) => {
       if (
         student.grade !== undefined &&
         student.grade >= 1 &&
         student.grade <= 5
       ) {
-        counts[student.grade] += 1;
+        COUNTS[student.grade] += 1;
       }
     });
 
-    return counts;
+    return COUNTS;
   };
 
   if (loading) return <div>Loading...</div>;

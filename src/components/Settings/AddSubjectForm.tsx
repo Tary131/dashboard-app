@@ -1,16 +1,16 @@
 import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../redux/hooks';
-import { addSubject } from '../../redux/thunks/subjectsThunks';
-import Button from './Button';
-import Input from './Input';
+import { addSubject } from '../../redux/subjects/thunks/subjectsThunks.ts';
+import Button from '../custom/Button.tsx';
+import Input from '../custom/Input.tsx';
 import { FIELD_NAMES } from '../../constants/formConstants';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
-interface FormValues {
+type FormValues = {
   [FIELD_NAMES.NAME]: string;
-}
+};
 
 const AddSubjectForm: FC = () => {
   const { t } = useTranslation();

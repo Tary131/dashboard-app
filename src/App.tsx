@@ -8,19 +8,21 @@ import Calendar from './components/Calendar/Calendar';
 import Settings from './components/Settings/Settings';
 import Header from './components/Header/Header';
 import { useAppSelector, useAppDispatch } from './redux/hooks';
-import { selectIsLoggedIn, setUser } from './redux/slices/auth/authSlice';
+import { setUser } from './redux/auth/authSlice';
+import { selectIsLoggedIn } from './redux/selectors';
 import { auth } from './firebase/firebaseConfig';
 import './i18n';
 import {
   toggleDarkMode,
   selectIsDarkMode,
   setDarkMode,
-} from './redux/slices/darkMode/darkModeSlice.ts';
+} from './redux/darkMode/darkModeSlice.ts';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
 import AuthModal from './components/Auth/AuthModal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { User } from 'firebase/auth';
+import LoadingSpinner from './components/custom/LoadingSpinner.tsx';
 
 const App: FC = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
@@ -56,11 +58,7 @@ const App: FC = () => {
   }, [dispatch]);
 
   if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -93,7 +91,7 @@ const App: FC = () => {
       </div>
 
       <AuthModal isOpen={!isLoggedIn && !loading} onClose={() => {}} />
-      <ToastContainer />
+      <ToastContainer theme={isDarkMode ? 'dark' : 'light'} />
     </div>
   );
 };

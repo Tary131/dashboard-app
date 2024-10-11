@@ -2,28 +2,23 @@ import { FC, useEffect, useState } from 'react';
 import Select from 'react-select';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchSubjects } from '../../redux/thunks/subjectsThunks';
+import { thunks } from '../../redux/thunks';
 import { Class, Subject } from '../../types/types';
-import { addStudent } from '../../redux/thunks/studentsThunks';
-import { fetchClasses } from '../../redux/thunks/classesThunks';
-import Button from './Button';
-import Input from './Input';
-import { selectSubjects } from '../../redux/slices/subjectsSlice.ts';
-import { selectClasses } from '../../redux/slices/classesSlice.ts';
+import Button from '../custom/Button.tsx';
+import Input from '../custom/Input.tsx';
+import { selectSubjects, selectClasses } from '../../redux/selectors';
 import { FIELD_NAMES } from '../../constants/formConstants.ts';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { customSelectStyles } from '../custom/customSelectStyles.ts';
+import { selectIsDarkMode } from '../../redux/darkMode/darkModeSlice.ts';
+import { SelectOption } from '../../types/types';
 
-type SelectOption = {
-  value: string;
-  label: string;
-};
-
-interface FormValues {
+type FormValues = {
   [FIELD_NAMES.FULL_NAME]: string;
   [FIELD_NAMES.CLASSES]: string;
   [FIELD_NAMES.SUBJECTS]: string[];
-}
+};
 
 const NewStudentForm: FC = () => {
   const { t } = useTranslation();
@@ -47,10 +42,10 @@ const NewStudentForm: FC = () => {
   const dispatch = useAppDispatch();
   const subjects = useAppSelector(selectSubjects);
   const classes = useAppSelector(selectClasses);
-
+  const isDarkMode = useAppSelector(selectIsDarkMode);
   useEffect(() => {
-    dispatch(fetchSubjects());
-    dispatch(fetchClasses());
+    dispatch(thunks.fetchSubjects());
+    dispatch(thunks.fetchClasses());
   }, [dispatch]);
 
   const classOptions: SelectOption[] =
@@ -75,11 +70,11 @@ const NewStudentForm: FC = () => {
     };
 
     try {
-      const resultAction = await dispatch(addStudent(studentData));
-      if (addStudent.rejected.match(resultAction)) {
+      const resultAction = await dispatch(thunks.addStudent(studentData));
+      if (thunks.addStudent.rejected.match(resultAction)) {
         toast.error(t('error.addStudent'));
       } else {
-        toast.error(t('success.addStudent'));
+        toast.success(t('success.addStudent'));
         reset();
       }
     } catch (error) {
@@ -118,6 +113,7 @@ const NewStudentForm: FC = () => {
           placeholder={t('form.selectClass')}
           className="basic-single"
           classNamePrefix="select"
+          styles={customSelectStyles(isDarkMode)}
         />
         {errors[FIELD_NAMES.CLASSES] && (
           <p className="text-red-600">{t('form.classRequired')}</p>
@@ -140,6 +136,7 @@ const NewStudentForm: FC = () => {
           placeholder={t('form.selectSubjects')}
           className="basic-multi-select"
           classNamePrefix="select"
+          styles={customSelectStyles(isDarkMode)}
         />
         {errors[FIELD_NAMES.SUBJECTS] && (
           <p className="text-red-600">{t('form.subjectsRequired')}</p>

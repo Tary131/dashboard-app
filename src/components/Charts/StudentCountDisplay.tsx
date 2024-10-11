@@ -1,11 +1,11 @@
 import { FC, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchStudents } from '../../redux/thunks/studentsThunks';
+import { fetchStudents } from '../../redux/students/thunks/studentsThunks.ts';
 import {
   selectStudentsError,
   selectStudentsLoading,
   selectStudentsTotalCount,
-} from '../../redux/slices/studentsSlice.ts';
+} from '../../redux/selectors';
 
 const StudentCountDisplay: FC = () => {
   const dispatch = useAppDispatch();

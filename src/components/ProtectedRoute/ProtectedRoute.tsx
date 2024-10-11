@@ -1,11 +1,11 @@
 import { FC, useState, useEffect } from 'react';
 import { useAppSelector } from '../../redux/hooks';
-import { selectIsLoggedIn } from '../../redux/slices/auth/authSlice';
+import { selectIsLoggedIn } from '../../redux/selectors';
 import AuthModal from '../Auth/AuthModal.tsx';
 
-interface ProtectedRouteProps {
+type ProtectedRouteProps = {
   element: React.ReactNode;
-}
+};
 
 const ProtectedRoute: FC<ProtectedRouteProps> = ({ element }) => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);

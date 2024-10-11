@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
 
 const useStudentAverages = () => {
-  const { formattedData } = useFormattedStudentData();
+  const { formattedData } = formattedStudentData();
 
   const { bestStudent, worstStudent } = useMemo(() => {
     const studentAverages: Record<string, { total: number; count: number }> =

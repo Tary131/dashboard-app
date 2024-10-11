@@ -1,10 +1,5 @@
-interface Student {
-  name: string;
-  grade: number;
-  subject: string;
-  class: string;
-  date: string;
-}
+import { StudentUtility as Student } from '../types/types.ts';
+
 export const sortData = (
   data: Student[],
   sortKey: keyof Student | null,

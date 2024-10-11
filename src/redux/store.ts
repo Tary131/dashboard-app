@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import studentsReducer from './slices/studentsSlice.ts';
-import subjectsReducer from './slices/subjectsSlice.ts';
-import classesReducer from './slices/classesSlice.ts';
-import gradesReducer from './slices/gradesSlice.ts';
-import authReducer from './slices/auth/authSlice.ts';
-import todoReducer from './slices/todoSlice.ts';
-import calendarReducer from './slices/calendarSlice.ts';
-import darkModeReducer from './slices/darkMode/darkModeSlice.ts';
+import studentsReducer from './students/studentsSlice.ts';
+import subjectsReducer from './subjects/subjectsSlice.ts';
+import classesReducer from './classes/classesSlice.ts';
+import gradesReducer from './grades/gradesSlice.ts';
+import authReducer from './auth/authSlice.ts';
+import todoReducer from './todos/todoSlice.ts';
+import calendarReducer from './calendar/calendarSlice.ts';
+import darkModeReducer from './darkMode/darkModeSlice.ts';
 
 const persistConfig = {
   key: 'root',

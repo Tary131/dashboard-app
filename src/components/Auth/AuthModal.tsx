@@ -1,26 +1,18 @@
 import { FC, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  loginUser,
-  registerUser,
-  selectAuthError,
-  selectIsLoggedIn,
-} from '../../redux/slices/auth/authSlice.ts';
+import { selectAuthError, selectIsLoggedIn } from '../../redux/selectors';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { thunks } from '../../redux/thunks';
+import Button from '../custom/Button';
+import Input from '../custom/Input';
+import { AuthFormValues } from '../../types/types.ts';
 
-type AuthFormValues = {
-  email: string;
-  password: string;
-  confirmPassword?: string;
-  name?: string;
-};
-
-interface AuthModalProps {
+type AuthModalProps = {
   isOpen: boolean;
   onClose: () => void;
-}
+};
 
 const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -47,7 +39,7 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
     if (isRegister) {
       if (data.password === data.confirmPassword) {
         dispatch(
-          registerUser({
+          thunks.registerUser({
             email: data.email,
             password: data.password,
             name: data.name || '',
@@ -62,7 +54,7 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return; //todo handle password miss-match
       }
     } else {
-      dispatch(loginUser(data)).then((result) => {
+      dispatch(thunks.loginUser(data)).then((result) => {
         if (result.meta.requestStatus === 'fulfilled') {
           toast.success(t('auth.loginSuccess')); // Show success toast
         }
@@ -71,7 +63,6 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
   };
 
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-lg w-96 p-5 relative">
@@ -81,85 +72,60 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-2">
-              {t('auth.email')}
-            </label>
-            <input
-              id="email"
+            <Input
+              id={isRegister ? 'registerEmail' : 'loginEmail'}
               type="email"
+              label={t('auth.email')}
               {...register('email', { required: t('auth.required.email') })}
-              className="border dark:border-gray-700 p-2 w-full bg-gray-50 dark:bg-gray-700 text-black dark:text-white"
+              error={errors.email?.message}
             />
-            {errors.email && (
-              <p className="text-red-500">{errors.email.message}</p>
-            )}
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="block mb-2">
-              {t('auth.password')}
-            </label>
-            <input
-              id="password"
+            <Input
+              id={isRegister ? 'registerPassword' : 'loginPassword'}
               type="password"
+              label={t('auth.password')}
               {...register('password', {
                 required: t('auth.required.password'),
               })}
-              className="border dark:border-gray-700 p-2 w-full bg-gray-50 dark:bg-gray-700 text-black dark:text-white"
+              error={errors.password?.message}
             />
-            {errors.password && (
-              <p className="text-red-500">{errors.password.message}</p>
-            )}
           </div>
-
           {isRegister && (
             <>
               <div className="mb-4">
-                <label htmlFor="confirmPassword" className="block mb-2">
-                  {t('auth.confirmPassword')}
-                </label>
-                <input
+                <Input
                   id="confirmPassword"
                   type="password"
+                  label={t('auth.confirmPassword')}
                   {...register('confirmPassword', {
                     required: t('auth.required.confirmPassword'),
                     validate: (value) =>
                       value === watch('password') || t('auth.passwordMismatch'),
                   })}
-                  className="border dark:border-gray-700 p-2 w-full bg-gray-50 dark:bg-gray-700 text-black dark:text-white"
+                  error={errors.confirmPassword?.message}
                 />
-                {errors.confirmPassword && (
-                  <p className="text-red-500">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
 
               <div className="mb-4">
-                <label htmlFor="name" className="block mb-2">
-                  {t('auth.name')}
-                </label>
-                <input
+                <Input
                   id="name"
                   type="text"
+                  label={t('auth.name')}
                   {...register('name', { required: t('auth.required.name') })}
-                  className="border dark:border-gray-700 p-2 w-full bg-gray-50 dark:bg-gray-700 text-black dark:text-white"
+                  error={errors.name?.message}
                 />
-                {errors.name && (
-                  <p className="text-red-500">{errors.name.message}</p>
-                )}
               </div>
             </>
           )}
 
           {authError && <p className="text-red-500">{t('auth.authError')}</p>}
 
-          <button
+          <Button
             type="submit"
-            className="bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded w-full mt-4"
-          >
-            {isRegister ? t('auth.register') : t('auth.login')}
-          </button>
+            label={isRegister ? t('auth.register') : t('auth.login')}
+          />
         </form>
 
         <div className="mt-4 text-center">
@@ -172,16 +138,8 @@ const AuthModal: FC<AuthModalProps> = ({ isOpen, onClose }) => {
               : t('auth.toggle.toRegister')}
           </button>
         </div>
-
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 dark:text-gray-400 hover:text-red-500"
-        >
-          X
-        </button>
       </div>
     </div>
   );
 };
-
 export default AuthModal;

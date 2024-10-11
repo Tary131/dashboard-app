@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
 import SubjectCard from './SubjectCard';
 
 const SubjectDashboard: FC = () => {
-  const { formattedData, loading, error } = useFormattedStudentData();
+  const { formattedData, loading, error } = formattedStudentData();
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -32,7 +32,6 @@ const SubjectDashboard: FC = () => {
     >
   );
 
-  // Average grade for each subject
   Object.keys(subjectsSummary).forEach((subject) => {
     const summary = subjectsSummary[subject];
     summary.avgGrade =

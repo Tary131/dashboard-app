@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import useFormattedStudentData from '../../hooks/FormattedStudentData.ts';
+import formattedStudentData from '../../hooks/FormattedStudentData.ts';
 import AverageGradesChart from './AverageGradesChart';
 
 const AverageGradesByTime = () => {
-  const { formattedData, loading, error } = useFormattedStudentData();
+  const { formattedData, loading, error } = formattedStudentData();
 
   const { weeklyData } = useMemo(() => {
     if (!formattedData.length)

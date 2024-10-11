@@ -1,12 +1,12 @@
 import React from 'react';
 import { BsFillMoonFill, BsFillSunFill } from 'react-icons/bs';
 import { useAppSelector } from '../../redux/hooks.ts';
-import { selectUser } from '../../redux/slices/auth/authSlice.ts';
+import { selectUser } from '../../redux/selectors';
 
-interface HeaderProps {
+type HeaderProps = {
   isLoggedIn: boolean;
   toggleDarkMode: () => void;
-}
+};
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, toggleDarkMode }) => {
   const user = useAppSelector(selectUser);
